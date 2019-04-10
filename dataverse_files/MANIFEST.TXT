@@ -1,0 +1,5 @@
+Replication-Code.Rmd (application/octet-stream) 44456 bytes.
+Supporting_Information 2016-09-0431.R2.docx (application/vnd.openxmlformats-officedocument.wordprocessingml.document) 151268 bytes.
+interaction_plots.R (type/x-r-syntax) 8982 bytes.
+country-year.csv (text/csv) 562555 bytes.
+table-5.csv (text/csv) 838 bytes.
