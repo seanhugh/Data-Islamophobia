@@ -2,14 +2,16 @@
 title: Terman Replication
 author: "Rochelle Terman"
 date: "February 27, 2017"
-output: html_document
+output:
+ pdf_document:
+  md_extension: +raw_tex
+header-includes:
+    - \usepackage{caption}
+    - \usepackage{float}
+    - \usepackage{lipsum}
 ---
 
-#### Table of Contents
-
-1. Prepare Data
-2. Main Text Tables
-3. Suppocountry.yearing Information Tables
+\captionsetup[table]{labelformat=empty}
 
 ```{r libraries, include=FALSE}
 rm(list=ls())
@@ -29,9 +31,12 @@ require(stm)
 source("dataverse_files/interaction_plots.R") # for interaction plots; see paper for attribution
 ```
 
-# 1. Prepare Data
-
 ```{r dataPrep, include=FALSE}
+
+##############
+# Prepare Data
+##############
+
 # load STM data
 load("dataverse_files/stm.RData")
 
@@ -85,11 +90,11 @@ non.muslim.maj <- rt[rt$muslim.maj == 0,]
 non.muslim.maj <- non.muslim.maj[!is.na(non.muslim.maj$region),]
 ```
 
-# 2. Main Text Tables and Figures
+# Appendix
 
 ## Table 1: Probit Analysis of U.S. News Coverage of Women Abroad
 
-```{r tab1, results = 'asis', echo=FALSE}
+```{r tab1, echo=FALSE, include=FALSE}
 # MUSLIM MAJORITY
 logit1 <- glm(n.binary ~ count + women_composite*muslim.maj + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt, family = binomial(link="probit"), control = list(maxit = 50))
 logit1.se <- coeftest(logit1, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
@@ -102,9 +107,16 @@ logit2.se <- coeftest(logit2, vcov=function(x) vcovHC(x, cluster="group", type="
 logit3 <- glm(n.binary ~ count + women_composite*muslim + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt, family = binomial(link="probit"), control = list(maxit = 50))
 logit3.se <- coeftest(logit3, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
 
-# PRINT
-stargazer(logit1, logit2, logit3,  type = "latex", label = "table:probit", style = "ajps", title = "Probit Analysis of U.S. News Coverage about Women Abroad", se = list(logit1.se, logit2.se, logit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Repocountry.yeared (Binary)", covariate.labels=c("Country Repocountry.years", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, .001))
 ```
+
+```{r tab1Out, echo=FALSE, results='asis'}
+
+# PRINT
+stargazer(logit1, logit2, logit3, header=FALSE, label = "table:probit", style = "ajps", title = "Probit Analysis of U.S. News Coverage about Women Abroad", se = list(logit1.se, logit2.se, logit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Repocountry.yeared (Binary)", covariate.labels=c("Country Repocountry.years", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, .001))
+
+```
+
+\pagebreak
 
 ## Table 2: Negative Binomial Analysis of U.S. News Coverage of Women Abroad
 
@@ -122,8 +134,10 @@ nb3 <- glm.nb(n.docs ~ count + women_composite*muslim + polity2 + domestic9 + lo
 nb3.se <- coeftest(nb3, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
 
 # PRINT
-stargazer(nb1, nb2, nb3, type = "html", label = "table:negbin", title = "Negative Binomial Analysis of U.S. News Coverage about Women Abroad", style = "ajps", se = list(nb1.se, nb2.se, nb3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Reported (Count)", covariate.labels=c("Country Reports", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, 0.001))
+stargazer(nb1, nb2, nb3, label = "table:negbin", header=FALSE,title = "Negative Binomial Analysis of U.S. News Coverage about Women Abroad", style = "ajps", se = list(nb1.se, nb2.se, nb3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Reported (Count)", covariate.labels=c("Country Reports", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, 0.001))
 ```
+
+\pagebreak
 
 ## Table 3: Summary of Topic Labels
 
@@ -163,14 +177,18 @@ heckit3.se = coeftest(heckit3$lm, vcov=function(x) vcovHC(x, cluster="group", ty
 
 
 # print - HTML
-stargazer(heckit1$lm, heckit2$lm, heckit3$lm, label = "table:heckit", style = "ajps", title = "Two-Step Analysis of Rights Focus in U.S. News Coverage about Women Abroad", se = list(heckit1.se, heckit2.se, heckit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Rights Focus", covariate.labels=c("Intercept", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Physical Integrity Rights"), star.cutoffs = c(0.05, 0.01, 0.001))
+stargazer(heckit1$lm, heckit2$lm, heckit3$lm, header=FALSE,label = "table:heckit", style = "ajps", title = "Two-Step Analysis of Rights Focus in U.S. News Coverage about Women Abroad", se = list(heckit1.se, heckit2.se, heckit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Rights Focus", covariate.labels=c("Intercept", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Physical Integrity Rights"), star.cutoffs = c(0.05, 0.01, 0.001))
 ```
+
+\pagebreak
 
 ## Figure 2: Marginal Effects of Women's Rights Index on Reported (Count)
 
 ```{r fig2, echo=FALSE}
 interaction_plot_binary(nb1, effect="women_composite", moderator="muslim.maj", interaction="women_composite:muslim.maj", factor_labels=c("Not Muslim Majority","Muslim Majority"), xlabel="", ylabel="Marginal Effect of Women's Rights on Coverage", title="")
 ```
+
+\pagebreak
 
 ## Figure 3: Summary of Topic Prevalence
 
@@ -179,6 +197,8 @@ interaction_plot_binary(nb1, effect="women_composite", moderator="muslim.maj", i
 
 plot.STM(model,type="summary",custom.labels=labels,main="")
 ```
+
+\pagebreak
 
 ## Figure 4: Expected Document Proportions for Four Topics
 
