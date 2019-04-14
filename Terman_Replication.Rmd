@@ -1,7 +1,7 @@
 ---
-title: Terman Replication
-author: "Rochelle Terman"
-date: "February 27, 2017"
+title: Analysis of "Islamophobia and Media Portrayals of Muslim Women"
+author: "Sean Hughes"
+date: "April 13, 2019"
 output:
  pdf_document:
   md_extension: +raw_tex
@@ -154,6 +154,8 @@ dat$FREX <- apply( frex, 1 , paste , collapse = ", " )
 print(xtable(dat))
 ```
 
+\pagebreak
+
 ## Table 4: Two-Step Analysis of Rights Focus in U.S. News Coverage of Women Abroad
 
 ```{r tab4, results = 'asis', echo=FALSE}
@@ -207,6 +209,7 @@ plot.STM(model,type="summary",custom.labels=labels,main="")
 prep <- estimateEffect(1:15 ~ REGION+s(YEAR),model,meta=meta,uncertainty="Global",documents=docs)
 regions = c("Asia","EECA","MENA","Africa","West","LA")
 
+par(mfrow=c(2,2))
 # print prevalence graphs for 4 topics
 for (i in c(3,7,9,14)){
   plot.estimateEffect(prep,"REGION",method="pointestimate",topics=i,printlegend=TRUE,labeltype="custom",custom.labels=regions,main=labels[i],ci.level=.95,nsims=100)
