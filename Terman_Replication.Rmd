@@ -31,6 +31,24 @@ require(stm)
 source("dataverse_files/interaction_plots.R") # for interaction plots; see paper for attribution
 ```
 
+# Abstract
+
+Rochelle Terman uses NLP to analyze recent...
+
+# Introduction
+
+# Materials and Methods
+
+# Results
+
+# Discussion
+
+# References
+
+# Acknowledgments
+
+\pagebreak
+
 ```{r dataPrep, include=FALSE}
 
 ##############
@@ -88,6 +106,7 @@ muslim.maj <- rt[rt$muslim.maj == 1,]
 muslim.maj <- muslim.maj[!is.na(muslim.maj$region),]
 non.muslim.maj <- rt[rt$muslim.maj == 0,]
 non.muslim.maj <- non.muslim.maj[!is.na(non.muslim.maj$region),]
+
 ```
 
 # Appendix
@@ -95,6 +114,7 @@ non.muslim.maj <- non.muslim.maj[!is.na(non.muslim.maj$region),]
 ## Table 1: Probit Analysis of U.S. News Coverage of Women Abroad
 
 ```{r tab1, echo=FALSE, include=FALSE}
+
 # MUSLIM MAJORITY
 logit1 <- glm(n.binary ~ count + women_composite*muslim.maj + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt, family = binomial(link="probit"), control = list(maxit = 50))
 logit1.se <- coeftest(logit1, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
@@ -121,6 +141,7 @@ stargazer(logit1, logit2, logit3, header=FALSE, label = "table:probit", style = 
 ## Table 2: Negative Binomial Analysis of U.S. News Coverage of Women Abroad
 
 ```{r tab2, results = 'asis', echo=FALSE}
+
 # MUSLIM MAJORITY
 nb1 <- glm.nb(n.docs ~ count + women_composite*muslim.maj + polity2 + domestic9 + log(pop.wdi) +log(gdp.pc.un),data = rt)
 nb1.se <- coeftest(nb1, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
@@ -134,7 +155,8 @@ nb3 <- glm.nb(n.docs ~ count + women_composite*muslim + polity2 + domestic9 + lo
 nb3.se <- coeftest(nb3, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
 
 # PRINT
-stargazer(nb1, nb2, nb3, label = "table:negbin", header=FALSE,title = "Negative Binomial Analysis of U.S. News Coverage about Women Abroad", style = "ajps", se = list(nb1.se, nb2.se, nb3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Reported (Count)", covariate.labels=c("Country Reports", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, 0.001))
+stargazer(nb1, nb2, nb3, label = "table:negbin", header=FALSE, title = "Negative Binomial Analysis of U.S. News Coverage about Women Abroad", style = "ajps", se = list(nb1.se, nb2.se, nb3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Reported (Count)", covariate.labels=c("Country Reports", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, 0.001))
+
 ```
 
 \pagebreak
@@ -142,6 +164,7 @@ stargazer(nb1, nb2, nb3, label = "table:negbin", header=FALSE,title = "Negative 
 ## Table 3: Summary of Topic Labels
 
 ```{r tab3, results = 'asis', echo=FALSE}
+
 # make a table with top words
 prob <- labelTopics(model, n= 10)$prob
 frex <- labelTopics(model, n=10)$frex
@@ -151,8 +174,11 @@ dat$Probability <- apply( prob, 1 , paste , collapse = ", " )
 dat$FREX <- apply( frex, 1 , paste , collapse = ", " )
 
 # export to html
+
 print(xtable(dat))
 ```
+
+
 
 \pagebreak
 
