@@ -28,6 +28,15 @@ class: center, middle, inverse, title-slide
 --
 ---
 
+# The Main Point
+
+Current news aims to affirm western cultural and political superiority over muslim countries
+ - Gendered orientalism: used poor treatment of women in other countries as a definition
+ 	of barbaric ways. would use "freeing" these women as a rallying cry.
+
+--
+---
+
 # Claims
 
 - Quantity Hypothesis: The binary sepertion of Muslim Women from "freer" western women (i.e. pushing this narritive). So Muslim women from countries with poor rights records make news, while opposite for non-muslim.
@@ -39,6 +48,86 @@ class: center, middle, inverse, title-slide
 # Quantity Hypothesis
 
 ![](./pres_resources/quantity.png)
+--
+---
+
+![](./pres_resources/quantity2.png)
+
+--
+---
+
+# Let's analyze some variables
+
+ ####The datapoints we will look at:
+ Qualifying Points
+    1. Muslim Percentage
+    2. Women's rights Index
+    3. Democracy
+    4. Instability
+    5. Population
+    6. GDP per Capita
+
+ Left side Variable
+    1. Number of articles
+    
+--
+---
+
+# Steps to analyze:
+
+##1. Link the data to country data using COW codes
+##2. Visualize Data
+##3. Compare Outliers to existing datasets
+
+--
+---
+
+# Muslim Percentage
+
+![](presentation_files/figure-html/muslim1-1.png)&lt;!-- --&gt;
+
+--
+---
+
+# Muslim Percentage
+
+![](presentation_files/figure-html/muslim2-1.png)&lt;!-- --&gt;
+
+--
+---
+
+# Muslim Percentage
+
+
+```
+##   country_name year n.docs muslim gdp.pc.un pop.wdi
+## 1    Palestine 2006      1   0.98  1269.392 3406334
+## 2    Palestine 2007      1   0.04  3942.630 7411569
+## 3    Palestine 2007      0   0.98  1391.220 3494496
+## 4    Palestine 2008      0   0.04  5276.930 7381579
+## 5    Palestine 2008      0   0.98  1636.468 3596688
+```
+
+--
+---
+
+# Muslim Percentage
+
+
+```
+##   country_name year n.docs muslim gdp.pc.un   pop.wdi
+## 1   Montenegro 2006      0   0.82        NA   2894475
+## 2   Azerbaijan 1991      0   0.11        NA   4504100
+## 3       Brunei 1984      0   0.15        NA   5469700
+## 4  Timor-Leste 2002      0   0.88        NA 254454778
+```
+
+--
+---
+
+# Women Percentage
+
+![](presentation_files/figure-html/women1-1.png)&lt;!-- --&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

@@ -34,6 +34,7 @@ require(stm)
 library(scales)
 library(countrycode)
 library(gt)
+library(xaringan)
 source("dataverse_files/interaction_plots.R") # for interaction plots; see paper for attribution
 ```
 
@@ -259,6 +260,12 @@ p4 <- rt_altered2 %>%
 
 # A look at potential impact of palestinian article. There are articles written in both the categories! But it appears that this has been accounted for.
 
+# Save RDS files for access in presentation
+saveRDS(p1, "./pres_resources/muslim1.RDS")
+saveRDS(p2, "./pres_resources/muslim2.RDS")
+saveRDS(p3, "./pres_resources/muslim3.RDS")
+saveRDS(p4, "./pres_resources/muslim4.RDS")
+
 ```
 
 ```{r analyzedata2, echo=FALSE}
@@ -274,60 +281,71 @@ p4 <- rt_altered2 %>%
 #		- 3 means that women rights were respected in law and practice
 
 # Plot 1: Create a plot of the muslim percentage
-ggplot(rt_altered, aes(x = year, y = women_composite, color = ccode)) + 
+w1 <- ggplot(rt_altered, aes(x = year, y = women_composite, color = ccode)) + 
   geom_line(show.legend = FALSE) +
-  labs(x = "Year", y = "Women's Rights Index")
+  labs(x = "Year", y = "Women's Rights Index", title="Composite Women's Rights Index over Time")
 
-# Plot 2: The biggest movers
+# Save the RDS for the prez
 
+saveRDS(w1, "./pres_resources/women1.RDS")
 
+# Interesting to look at this just by women's rights, without the added women component
 
-```
-
-```{r analysis2}
-
-rt1 <- rt %>% select(ccode, year, muslim) %>% 
-  
-  # remove NA's
-  
+rt_altered %>% 
+  filter(!is.na(n.docs)) %>% 
   filter(!is.na(muslim)) %>% 
+  filter(!is.na(pop.wdi)) %>% 
+  filter(!is.na(women_composite)) %>% 
+  mutate(num_muslims = muslim*pop.wdi,
+         women_treat_tot = women_composite*pop.wdi) %>% 
+  group_by(region, year) %>% 
+  summarize(num_docs = sum(n.docs),
+            tot_muslims = sum(num_muslims),
+            tot_population = sum(pop.wdi),
+            tot_women_treat = sum(women_treat_tot)) %>% 
+  mutate(muslim_perc = tot_muslims / tot_population,
+         women_perc = tot_women_treat / tot_population) 
+
+# Make a plot with all 3 of these things: women rights, muslim percentage
+
+
+# Conclusion is just the linear model without muslim pct, just treatment of women
+
   
-  mutate(ccode = as.numeric(as.character(ccode)))
+```
 
+```{r tab11, echo=FALSE, include=FALSE}
 
-rt_sum <- rt1 %>% 
-  group_by(ccode) %>% 
-  summarise(avg_muslim = mean(muslim))
+## ALTERED REGRESSION TO SHOW THE MUSLIM CHANGE FEATURES
 
-rt_beg <- rt1 %>% 
-  group_by(ccode) %>% 
-  filter(year == 1980) %>% 
-  summarise(beg_muslim = mean(muslim))
+# Needs to make the point, "countries with worse female treatment are more likely to be reported on"
+# Why did they use n binary here??
+# Two changes: 1 change it from n binary. 2 change it from muslim
 
-rt_end <- rt1 %>% 
-  group_by(ccode) %>% 
-  filter(year == 2014) %>% 
-  summarise(end_muslim = mean(muslim))
+# MUSLIM MAJORITY
+logit1 <- glm(n.binary ~ count + women_composite*muslim.maj + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt, family = binomial(link="probit"), control = list(maxit = 50))
+logit1.se <- coeftest(logit1, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
 
-joined_set <- right_join(rt_sum, rt_end, by = "ccode")
+# MENA
+logit2 <- glm(n.binary ~ count + women_composite*mena + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt, family = binomial(link="probit"), control = list(maxit = 50))
+logit2.se <- coeftest(logit2, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
 
-joined_set2 <- right_join(rt_beg, joined_set, by = "ccode")
-
-the_gainers <- joined_set2 %>% 
-  mutate(dif = end_muslim - beg_muslim) %>% 
-  filter(dif > 0)
-
-# put the country names in for the ones that gained values
-joined_set2 %>% filter(!is.na(avg_muslim))
-
-left_join(joined_set2, simple_codes, by="ccode") %>% 
-  filter(!is.na(end_muslim)) %>% 
-  filter(!is.na(beg_muslim)) %>% 
-  filter(end_muslim > beg_muslim)
-
-rt %>% group_by(ccode) %>% count()
+# PERCENT MUSLIM
+logit3 <- glm(n.binary ~ count + women_composite*muslim + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt, family = binomial(link="probit"), control = list(maxit = 50))
+logit3.se <- coeftest(logit3, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
 
 ```
+
+```{r tab11ut, echo=FALSE, results='asis'}
+
+# PRINT
+stargazer(logit1, logit2, logit3, header=FALSE, label = "table:probit", style = "ajps", title = "Probit Analysis of U.S. News Coverage about Women Abroad", se = list(logit1.se, logit2.se, logit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Repocountry.yeared (Binary)", covariate.labels=c("Country Repocountry.years", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, .001))
+
+```
+
+
+
+
 
 # Appendix
 

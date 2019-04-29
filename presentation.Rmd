@@ -23,6 +23,15 @@ output:
 --
 ---
 
+# The Main Point
+
+Current news aims to affirm western cultural and political superiority over muslim countries
+ - Gendered orientalism: used poor treatment of women in other countries as a definition
+ 	of barbaric ways. would use "freeing" these women as a rallying cry.
+
+--
+---
+
 # Claims
 
 - Quantity Hypothesis: The binary sepertion of Muslim Women from "freer" western women (i.e. pushing this narritive). So Muslim women from countries with poor rights records make news, while opposite for non-muslim.
@@ -34,4 +43,99 @@ output:
 # Quantity Hypothesis
 
 ![](./pres_resources/quantity.png)
+--
+---
 
+![](./pres_resources/quantity2.png)
+
+--
+---
+
+# Let's analyze some variables
+
+ ####The datapoints we will look at:
+ Qualifying Points
+    1. Muslim Percentage
+    2. Women's rights Index
+    3. Democracy
+    4. Instability
+    5. Population
+    6. GDP per Capita
+
+ Left side Variable
+    1. Number of articles
+    
+--
+---
+
+# Steps to analyze:
+
+##1. Link the data to country data using COW codes
+##2. Visualize Data
+##3. Compare Outliers to existing datasets
+
+--
+---
+
+# Muslim Percentage
+
+```{r muslim1, echo=FALSE, warning=FALSE, fig.width=12}
+
+readRDS("./pres_resources/muslim1.RDS")
+
+```
+
+--
+---
+
+# Muslim Percentage
+
+```{r muslim2, echo=FALSE, warning=FALSE, fig.width=12}
+
+readRDS("./pres_resources/muslim2.RDS")
+
+```
+
+--
+---
+
+# Muslim Percentage
+
+```{r muslim3, echo=FALSE, warning=FALSE, fig.width=12}
+
+readRDS("./pres_resources/muslim3.RDS")
+
+```
+
+--
+---
+
+# Muslim Percentage
+
+```{r muslim4, echo=FALSE, warning=FALSE, fig.width=12}
+
+readRDS("./pres_resources/muslim4.RDS")
+
+```
+
+--
+---
+
+# Women's Rights Index
+
+```{r women1, echo=FALSE, warning=FALSE, fig.width=12}
+
+readRDS("./pres_resources/women1.RDS")
+
+```
+
+--
+---
+
+# Women's Rights Index
+
+```{r women2, echo=FALSE, warning=FALSE, fig.width=12}
+
+readRDS("./pres_resources/women2.RDS")
+
+```
