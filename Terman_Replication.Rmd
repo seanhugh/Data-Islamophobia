@@ -16,6 +16,9 @@ header-includes:
 ```{r libraries, include=FALSE}
 rm(list=ls())
 
+library(tidyverse)
+library(dplyr)
+
 require(plyr)
 require("MASS")
 require("xtable")
@@ -28,6 +31,9 @@ require(sampleSelection) # for heckman correction
 require(mfx) # for marginal effects
 require(Matching) # required by the interaction_plots.R script below
 require(stm)
+library(scales)
+library(countrycode)
+library(gt)
 source("dataverse_files/interaction_plots.R") # for interaction plots; see paper for attribution
 ```
 
@@ -59,7 +65,9 @@ Rochelle Terman uses NLP to analyze recent...
 load("dataverse_files/stm.RData")
 
 # load country-year data
-rt <- read.csv("dataverse_files/country-year.csv")
+rt <- read.csv("./dataverse_files/country-year.csv")
+
+rt_original <- rt
 
 # subset
 rt <- rt[,c("ccode", "year", "n.docs", "n.words", "n.binary", "rights", "alt.dv.perc", "muslim", "muslim.maj", "mena", "polity2", "physint", "amnesty", "statedept", "gdp.pc.un", "pop.wdi", "wopol", "wosoc", "wecon", "domestic9", "count", "region")]
@@ -86,6 +94,7 @@ rt$n.binary.lag <- lag(rt$n.binary, 1)
 rt$rights.lag <- lag(rt$rights, 1)
 rt$alt.dv.perc.lag <- lag(rt$alt.dv.perc, 1)
 rt$muslim.maj <- lag(rt$muslim.maj, 1)
+rt$muslim_no_lag <- rt$muslim
 rt$muslim <- lag(rt$muslim, 1)
 rt$women_composite <- lag(rt$women_composite, 1)
 rt$wopol <- lag(rt$wopol, 1)
@@ -106,6 +115,217 @@ muslim.maj <- rt[rt$muslim.maj == 1,]
 muslim.maj <- muslim.maj[!is.na(muslim.maj$region),]
 non.muslim.maj <- rt[rt$muslim.maj == 0,]
 non.muslim.maj <- non.muslim.maj[!is.na(non.muslim.maj$region),]
+
+rt %>% arrange(desc(gdp.pc.un))
+
+```
+
+```{r cleanData, echo=FALSE}
+
+# The data colums are the following:
+
+# ccode: COW Numeric Country Code (countrycode package)      
+# year:       
+
+# n.docs: number of articles for a given country year in sample    
+
+# n.words: number of total words in all articles for a given country year 
+
+# n.binary: a binary (0/1) indicator for whether a given country year had at least 1 article in sample.   
+
+# rights: average weight on the topic of women's rights for articles about a given country year. See paper for more explanation -- this is the main DV.  
+
+# alt.dv.perc: The proportion of articles that mentioned words right, equal, discriminat. An alternative measure of the DV (see paper).
+
+# muslim: Percentage of population that is Muslim.      
+
+# muslim.maj: 0/1 indicator for whether population is majority Muslim.  
+
+# mena: 0/1 indicator for whether country is in MENA region.        
+
+# polity2: combined polity score 2 (see polity IV project)     
+
+# physint CIRI physical integrity score (see CIRI data)    
+
+# amnesty: PTS Amnesty (see Political Terror Score data)     
+
+# statedept  PTS State Department (see Political Terror Score data) 
+
+# gdp.pc.un: GDP per capita, current US$ (UN data)  
+
+# pop.wdi: WDI population mid-year estimates (World Bank Development Indicators)     
+
+# wopol: CIRI Women’s Political Rights (see CIRI data)         
+
+# wosoc: CIRI Women’s Social Rights (see CIRI data)         
+
+# wecon: CIRI Women’s Economic Rights (see CIRI data)   
+
+# women_composite: Average of the three CIRI scores
+
+# domestic9: Domestic Conflict / Stability Index (Cross National Time Series Data, Banks (2012))   
+
+# count: Number of articles mentioning country-year in the NYT (see paper)      
+
+# region: Region classification
+
+#############################
+
+# Add in country names to the dataset
+# Manually add in Palestine as it is not contained in the ccode dataset
+
+rt_altered <- rt %>% 
+  mutate(country_name = case_when(
+    ccode == 999 ~ "Palestine",
+    TRUE ~ countrycode((ccode), "cown", "country.name")
+  ))  %>% 
+  
+  # Set the year to be a number
+  
+  mutate(year = as.numeric(as.character(year)))
+              
+```
+
+
+```{r analyzeData1, echo=FALSE}
+
+# The datapoints we will look at
+# --- Qualifying Points ---
+#    1. Muslim Percentage
+#    2. Women's rights Index
+#    3. Democracy
+#    4. Instability
+#    5. Population
+#    6. GDP per Capita
+#
+# --- Left side Variable ---
+#    1. Number of articles
+#    2. Analysis of text
+
+######################
+# 1. Muslim Percentage
+######################
+
+# Plot 1: Create a plot of the muslim percentage
+p1 <- ggplot(rt_altered, aes(x = year, y = muslim, color = ccode)) + 
+  geom_line(show.legend = FALSE) +
+  labs(x = "Year", y = "Perentage Muslim (%)", title = "Percentage Muslim over Time by Country") +
+  scale_y_continuous(labels=percent)
+
+# Plot 2: Size of change of data over the whole period
+
+rt_altered2 <- rt_altered2 %>% filter(year != 1979) %>% 
+  mutate(change_muslim = muslim_no_lag - muslim)
+
+p2 <- ggplot(rt_altered2) + geom_histogram(aes(change_muslim), bins = 200)
+
+# look at outliers where the percentage muslim is greater than 90%
+
+p3 <- rt_altered2 %>% filter(abs(change_muslim) > .90) %>%  
+  select(country_name, year, n.docs, muslim, gdp.pc.un, pop.wdi) %>% 
+  head(5) %>% 
+  gt() %>% 
+  tab_header(
+    title = "Changes of over 90% in Muslim Percentage"
+  )
+
+# look at outliers where the percentage muslim is greater than 90%
+
+p4 <- rt_altered2 %>% 
+  filter(ccode != 999) %>% 
+  filter(abs(change_muslim) > .50) %>%  
+  select(country_name, year, n.docs, muslim, gdp.pc.un, pop.wdi) %>% 
+  head(5) %>% 
+  gt() %>% 
+  tab_header(
+    title = "Changes of over 50% in Muslim Percentage (Excluding Palestine)"
+  )
+
+# We see Montenegro, Azerbaijan, Brunei, and Timor-Leste
+  # Montenegro 2006 - independance declared
+  # Azerbaijan 1991 - Independance declared
+  # Brunei 1984 - Independance declared
+  # Timor Leste - Independence, Population from Indonesian
+
+# FINDINGS:
+# Palestine goes from .04 to .98 to .04.... how does this affect the data?
+  # How many news articles are written about palestine?
+  # It appears that when she intended to fix the data by correcting for numbers 999
+  # I also question the percentage used for palestine
+# Some countries have huge swings that seem impossible, but soon can be seen as a product
+  # of political circumstances such as independence etc
+# Verified other data points randomly with other sources and appear accurate
+# Timor Leste has a population of 254,000,000??
+
+# A look at potential impact of palestinian article. There are articles written in both the categories! But it appears that this has been accounted for.
+
+```
+
+```{r analyzedata2, echo=FALSE}
+
+#########################
+# 2. Women's Rights Index
+#########################
+
+# has values between 0 and 3
+# - Uses CingranelliRichards Rights Index (CIRI) as measure of women's rights status
+#	  - has 3 measures: Women’s Economic Rights, Women’s Political Rights, and Women’s Social Rights
+#		- 0 means that women rights were not respected in law or practice
+#		- 3 means that women rights were respected in law and practice
+
+# Plot 1: Create a plot of the muslim percentage
+ggplot(rt_altered, aes(x = year, y = women_composite, color = ccode)) + 
+  geom_line(show.legend = FALSE) +
+  labs(x = "Year", y = "Women's Rights Index")
+
+# Plot 2: The biggest movers
+
+
+
+```
+
+```{r analysis2}
+
+rt1 <- rt %>% select(ccode, year, muslim) %>% 
+  
+  # remove NA's
+  
+  filter(!is.na(muslim)) %>% 
+  
+  mutate(ccode = as.numeric(as.character(ccode)))
+
+
+rt_sum <- rt1 %>% 
+  group_by(ccode) %>% 
+  summarise(avg_muslim = mean(muslim))
+
+rt_beg <- rt1 %>% 
+  group_by(ccode) %>% 
+  filter(year == 1980) %>% 
+  summarise(beg_muslim = mean(muslim))
+
+rt_end <- rt1 %>% 
+  group_by(ccode) %>% 
+  filter(year == 2014) %>% 
+  summarise(end_muslim = mean(muslim))
+
+joined_set <- right_join(rt_sum, rt_end, by = "ccode")
+
+joined_set2 <- right_join(rt_beg, joined_set, by = "ccode")
+
+the_gainers <- joined_set2 %>% 
+  mutate(dif = end_muslim - beg_muslim) %>% 
+  filter(dif > 0)
+
+# put the country names in for the ones that gained values
+joined_set2 %>% filter(!is.na(avg_muslim))
+
+left_join(joined_set2, simple_codes, by="ccode") %>% 
+  filter(!is.na(end_muslim)) %>% 
+  filter(!is.na(beg_muslim)) %>% 
+  filter(end_muslim > beg_muslim)
+
+rt %>% group_by(ccode) %>% count()
 
 ```
 
