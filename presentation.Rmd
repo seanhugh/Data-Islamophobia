@@ -51,6 +51,23 @@ Current news aims to affirm western cultural and political superiority over musl
 --
 ---
 
+# Steps to analyze:
+
+####1. Clean Data
+- Link the data to country data using COW codes
+
+####2. Analyze Data Quality
+- Visualize Data
+- Compare Outliers to existing datasets
+
+####3. Test Hypothesis
+- What occurs if we look at a non-binary indicator for number of articles?
+- What are the non-muslim countries that compare when looking at status of women?
+- What happens if we just include percent muslim?
+
+--
+---
+
 # Let's analyze some variables
 
  ####The datapoints we will look at:
@@ -64,15 +81,6 @@ Current news aims to affirm western cultural and political superiority over musl
 
  Left side Variable
     1. Number of articles
-    
---
----
-
-# Steps to analyze:
-
-##1. Link the data to country data using COW codes
-##2. Visualize Data
-##3. Compare Outliers to existing datasets
 
 --
 ---
@@ -112,7 +120,7 @@ readRDS("./pres_resources/muslim3.RDS")
 
 # Muslim Percentage
 
-```{r muslim4, echo=FALSE, warning=FALSE, fig.width=12}
+```{r muslim4, echo=FALSE, warning=FALSE, fig.width=12, results='asis'}
 
 readRDS("./pres_resources/muslim4.RDS")
 
@@ -136,6 +144,5 @@ readRDS("./pres_resources/women1.RDS")
 
 ```{r women2, echo=FALSE, warning=FALSE, fig.width=12}
 
-readRDS("./pres_resources/women2.RDS")
 
 ```

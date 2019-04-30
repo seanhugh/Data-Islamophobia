@@ -215,32 +215,32 @@ p1 <- ggplot(rt_altered, aes(x = year, y = muslim, color = ccode)) +
 
 # Plot 2: Size of change of data over the whole period
 
-rt_altered2 <- rt_altered2 %>% filter(year != 1979) %>% 
+rt_altered2 <- rt_altered %>% filter(year != 1979) %>% 
   mutate(change_muslim = muslim_no_lag - muslim)
 
 p2 <- ggplot(rt_altered2) + geom_histogram(aes(change_muslim), bins = 200)
 
 # look at outliers where the percentage muslim is greater than 90%
 
-p3 <- rt_altered2 %>% filter(abs(change_muslim) > .90) %>%  
-  select(country_name, year, n.docs, muslim, gdp.pc.un, pop.wdi) %>% 
-  head(5) %>% 
-  gt() %>% 
-  tab_header(
-    title = "Changes of over 90% in Muslim Percentage"
-  )
+#p3 <- rt_altered2 %>% filter(abs(change_muslim) > .90) %>%  
+ # dplyr::select(country_name, year, n.docs, muslim, gdp.pc.un, pop.wdi) %>% 
+#  head(5) %>% 
+#  gt() %>% 
+#  tab_header(
+#    title = "Changes of over 90% in Muslim Percentage"
+#  )
 
 # look at outliers where the percentage muslim is greater than 90%
 
-p4 <- rt_altered2 %>% 
-  filter(ccode != 999) %>% 
-  filter(abs(change_muslim) > .50) %>%  
-  select(country_name, year, n.docs, muslim, gdp.pc.un, pop.wdi) %>% 
-  head(5) %>% 
-  gt() %>% 
-  tab_header(
-    title = "Changes of over 50% in Muslim Percentage (Excluding Palestine)"
-  )
+#p4 <- rt_altered2 %>% 
+#  filter(ccode != 999) %>% 
+#  filter(abs(change_muslim) > .50) %>%  
+#  select(country_name, year, n.docs, muslim, gdp.pc.un, pop.wdi) %>% 
+#  head(5) %>% 
+#  gt() %>% 
+#  tab_header(
+#    title = "Changes of over 50% in Muslim Percentage (Excluding Palestine)"
+#  )
 
 # We see Montenegro, Azerbaijan, Brunei, and Timor-Leste
   # Montenegro 2006 - independance declared
@@ -263,8 +263,8 @@ p4 <- rt_altered2 %>%
 # Save RDS files for access in presentation
 saveRDS(p1, "./pres_resources/muslim1.RDS")
 saveRDS(p2, "./pres_resources/muslim2.RDS")
-saveRDS(p3, "./pres_resources/muslim3.RDS")
-saveRDS(p4, "./pres_resources/muslim4.RDS")
+#saveRDS(p3, "./pres_resources/muslim3.RDS")
+#saveRDS(p4, "./pres_resources/muslim4.RDS")
 
 ```
 
@@ -321,30 +321,76 @@ rt_altered %>%
 # Needs to make the point, "countries with worse female treatment are more likely to be reported on"
 # Why did they use n binary here??
 # Two changes: 1 change it from n binary. 2 change it from muslim
+# 
 
 # MUSLIM MAJORITY
-logit1 <- glm(n.binary ~ count + women_composite*muslim.maj + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt, family = binomial(link="probit"), control = list(maxit = 50))
+logit1 <- lm(n.docs ~ count + women_composite*muslim.maj + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt,  control = list(maxit = 50))
 logit1.se <- coeftest(logit1, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
 
 # MENA
-logit2 <- glm(n.binary ~ count + women_composite*mena + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt, family = binomial(link="probit"), control = list(maxit = 50))
+logit2 <- lm(n.docs ~ count + women_composite*mena + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt, control = list(maxit = 50))
 logit2.se <- coeftest(logit2, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
 
 # PERCENT MUSLIM
-logit3 <- glm(n.binary ~ count + women_composite*muslim + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt, family = binomial(link="probit"), control = list(maxit = 50))
+logit3 <- lm(n.docs ~ count + women_composite*muslim + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt, control = list(maxit = 50))
 logit3.se <- coeftest(logit3, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
 
 ```
-
+# The table i want
 ```{r tab11ut, echo=FALSE, results='asis'}
 
 # PRINT
 stargazer(logit1, logit2, logit3, header=FALSE, label = "table:probit", style = "ajps", title = "Probit Analysis of U.S. News Coverage about Women Abroad", se = list(logit1.se, logit2.se, logit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Repocountry.yeared (Binary)", covariate.labels=c("Country Repocountry.years", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, .001))
 
 ```
+\pagebreak
 
+```{r tab111, echo=FALSE, include=FALSE}
 
+## ALTERED REGRESSION TO SHOW THE MUSLIM CHANGE FEATURES
 
+# Needs to make the point, "countries with worse female treatment are more likely to be reported on"
+# Why did they use n binary here??
+# Two changes: 1 change it from n binary. 2 change it from muslim
+# 
+
+# MUSLIM MAJORITY
+logit1 <- lm(n.docs ~ count + muslim + women_composite + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt,  control = list(maxit = 50))
+#logit1.se <- coeftest(logit1, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+
+# MENA
+logit2 <- lm(n.docs ~ count + muslim.maj + women_composite + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt, control = list(maxit = 50))
+#logit2.se <- coeftest(logit2, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+
+# PERCENT MUSLIM
+logit3 <- lm(n.docs ~ count + mena + women_composite + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt, control = list(maxit = 50))
+#logit3.se <- coeftest(logit3, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+```
+# The table i want 2
+```{r tab111ut, echo=FALSE, results='asis'}
+
+# PRINT
+stargazer(logit1, logit2, logit3, header=FALSE, label = "table:probit", style = "ajps", title = "Probit Analysis of U.S. News Coverage about Women Abroad", se = list(logit1.se, logit2.se, logit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Repocountry.yeared (Binary)", star.cutoffs = c(0.05, 0.01, .001))
+
+```
+
+# fun table :)
+
+\pagebreak
+
+```{r tab1111, echo=FALSE, include=FALSE}
+
+# MUSLIM MAJORITY
+logit5 <- lm(women_composite ~ count + muslim + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt )
+
+```
+# The table i want 2
+```{r tab111ut1, echo=FALSE, results='asis'}
+
+# PRINT
+stargazer(logit5, header=FALSE, label = "table:probit", style = "ajps", title = "Probit Analysis of U.S. News Coverage about Women Abroad", se = list(logit1.se, logit2.se, logit3.se), notes="Robust standard errors clustered on country appear in parentheses.", star.cutoffs = c(0.05, 0.01, .001))
+
+```
 
 
 # Appendix

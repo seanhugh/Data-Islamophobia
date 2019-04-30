@@ -56,6 +56,23 @@ Current news aims to affirm western cultural and political superiority over musl
 --
 ---
 
+# Steps to analyze:
+
+####1. Clean Data
+- Link the data to country data using COW codes
+
+####2. Analyze Data Quality
+- Visualize Data
+- Compare Outliers to existing datasets
+
+####3. Test Hypothesis
+- What occurs if we look at a non-binary indicator for number of articles?
+- What are the non-muslim countries that compare when looking at status of women?
+- What happens if we just include percent muslim?
+
+--
+---
+
 # Let's analyze some variables
 
  ####The datapoints we will look at:
@@ -69,15 +86,6 @@ Current news aims to affirm western cultural and political superiority over musl
 
  Left side Variable
     1. Number of articles
-    
---
----
-
-# Steps to analyze:
-
-##1. Link the data to country data using COW codes
-##2. Visualize Data
-##3. Compare Outliers to existing datasets
 
 --
 ---
@@ -113,21 +121,23 @@ Current news aims to affirm western cultural and political superiority over musl
 
 # Muslim Percentage
 
-
-```
-##   country_name year n.docs muslim gdp.pc.un   pop.wdi
-## 1   Montenegro 2006      0   0.82        NA   2894475
-## 2   Azerbaijan 1991      0   0.11        NA   4504100
-## 3       Brunei 1984      0   0.15        NA   5469700
-## 4  Timor-Leste 2002      0   0.88        NA 254454778
-```
+  country_name year n.docs muslim gdp.pc.un   pop.wdi
+1   Montenegro 2006      0   0.82        NA   2894475
+2   Azerbaijan 1991      0   0.11        NA   4504100
+3       Brunei 1984      0   0.15        NA   5469700
+4  Timor-Leste 2002      0   0.88        NA 254454778
 
 --
 ---
 
-# Women Percentage
+# Women's Rights Index
 
 ![](presentation_files/figure-html/women1-1.png)&lt;!-- --&gt;
+
+--
+---
+
+# Women's Rights Index
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
