@@ -23,6 +23,11 @@ output:
 --
 ---
 
+<img src="./pres_resources/nyt.png" width="80%">
+
+--
+---
+
 # The Main Point
 
 Current news aims to affirm western cultural and political superiority over muslim countries
@@ -193,6 +198,13 @@ readRDS("./pres_resources/muslim3.RDS")
 readRDS("./pres_resources/muslim4.RDS")
 
 ```
+
+--
+---
+
+# Independence
+
+<img src="./pres_resources/independence.png" width="80%">
 
 --
 ---
