@@ -314,66 +314,6 @@ rt_altered %>%
   
 ```
 
-```{r tab11, echo=FALSE, include=FALSE}
-
-## ALTERED REGRESSION TO SHOW THE MUSLIM CHANGE FEATURES
-
-# Needs to make the point, "countries with worse female treatment are more likely to be reported on"
-# Why did they use n binary here??
-# Two changes: 1 change it from n binary. 2 change it from muslim
-# 
-
-# MUSLIM MAJORITY
-logit1 <- lm(n.docs ~ count + women_composite*muslim.maj + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt,  control = list(maxit = 50))
-logit1.se <- coeftest(logit1, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
-
-# MENA
-logit2 <- lm(n.docs ~ count + women_composite*mena + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt, control = list(maxit = 50))
-logit2.se <- coeftest(logit2, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
-
-# PERCENT MUSLIM
-logit3 <- lm(n.docs ~ count + women_composite*muslim + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt, control = list(maxit = 50))
-logit3.se <- coeftest(logit3, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
-
-```
-# The table i want
-```{r tab11ut, echo=FALSE, results='asis'}
-
-# PRINT
-stargazer(logit1, logit2, logit3, header=FALSE, label = "table:probit", style = "ajps", title = "Probit Analysis of U.S. News Coverage about Women Abroad", se = list(logit1.se, logit2.se, logit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Repocountry.yeared (Binary)", covariate.labels=c("Country Repocountry.years", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, .001))
-
-```
-\pagebreak
-
-```{r tab111, echo=FALSE, include=FALSE}
-
-## ALTERED REGRESSION TO SHOW THE MUSLIM CHANGE FEATURES
-
-# Needs to make the point, "countries with worse female treatment are more likely to be reported on"
-# Why did they use n binary here??
-# Two changes: 1 change it from n binary. 2 change it from muslim
-# 
-
-# MUSLIM MAJORITY
-logit1 <- lm(n.docs ~ count + muslim + women_composite + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt,  control = list(maxit = 50))
-#logit1.se <- coeftest(logit1, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
-
-# MENA
-logit2 <- lm(n.docs ~ count + muslim.maj + women_composite + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt, control = list(maxit = 50))
-#logit2.se <- coeftest(logit2, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
-
-# PERCENT MUSLIM
-logit3 <- lm(n.docs ~ count + mena + women_composite + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt, control = list(maxit = 50))
-#logit3.se <- coeftest(logit3, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
-```
-# The table i want 2
-```{r tab111ut, echo=FALSE, results='asis'}
-
-# PRINT
-stargazer(logit1, logit2, logit3, header=FALSE, label = "table:probit", style = "ajps", title = "Probit Analysis of U.S. News Coverage about Women Abroad", se = list(logit1.se, logit2.se, logit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Repocountry.yeared (Binary)", star.cutoffs = c(0.05, 0.01, .001))
-
-```
-
 # fun table :)
 
 \pagebreak
@@ -381,14 +321,20 @@ stargazer(logit1, logit2, logit3, header=FALSE, label = "table:probit", style = 
 ```{r tab1111, echo=FALSE, include=FALSE}
 
 # MUSLIM MAJORITY
-logit5 <- lm(women_composite ~ count + muslim + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt )
+logit5 <- lm(women_composite ~ muslim + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt )
 
 ```
-# The table i want 2
 ```{r tab111ut1, echo=FALSE, results='asis'}
 
 # PRINT
 stargazer(logit5, header=FALSE, label = "table:probit", style = "ajps", title = "Probit Analysis of U.S. News Coverage about Women Abroad", se = list(logit1.se, logit2.se, logit3.se), notes="Robust standard errors clustered on country appear in parentheses.", star.cutoffs = c(0.05, 0.01, .001))
+
+```
+
+##
+
+```{r part3}
+
 
 ```
 

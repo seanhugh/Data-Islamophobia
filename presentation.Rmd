@@ -40,13 +40,22 @@ Current news aims to affirm western cultural and political superiority over musl
 --
 ---
 
-# Quantity Hypothesis
-
-![](./pres_resources/quantity.png)
+# Quantity Hypothesis 1
+<img src="./pres_resources/quantity.png" width="100%">
 --
 ---
+# Quantity Hypothesis 2
+<img src="./pres_resources/binary1.png" width="55%">
 
-![](./pres_resources/quantity2.png)
+--
+---
+# Quantity Hypothesis 3
+<img src="./pres_resources/negative1.png" width="65%">
+
+--
+---
+# Quantity Hypothesis 4
+<img src="./pres_resources/figure3.png" width="80%">
 
 --
 ---
@@ -120,7 +129,7 @@ readRDS("./pres_resources/muslim3.RDS")
 
 # Muslim Percentage
 
-```{r muslim4, echo=FALSE, warning=FALSE, fig.width=12, results='asis'}
+```{r muslim4, echo=FALSE, warning=FALSE, fig.width=12}
 
 readRDS("./pres_resources/muslim4.RDS")
 
@@ -142,7 +151,6 @@ readRDS("./pres_resources/women1.RDS")
 
 # Women's Rights Index
 
-```{r women2, echo=FALSE, warning=FALSE, fig.width=12}
+<img src="./pres_resources/women2.png" width="80%">
 
 
-```
