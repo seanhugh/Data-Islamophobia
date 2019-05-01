@@ -291,7 +291,7 @@ saveRDS(w1, "./pres_resources/women1.RDS")
 
 # Interesting to look at this just by women's rights, without the added women component
 
-rt_altered %>% 
+plot_data <- rt_altered %>% 
   filter(!is.na(n.docs)) %>% 
   filter(!is.na(muslim)) %>% 
   filter(!is.na(pop.wdi)) %>% 
@@ -304,14 +304,84 @@ rt_altered %>%
             tot_population = sum(pop.wdi),
             tot_women_treat = sum(women_treat_tot)) %>% 
   mutate(muslim_perc = tot_muslims / tot_population,
-         women_perc = tot_women_treat / tot_population) 
+         women_perc = tot_women_treat / tot_population) %>% 
+  mutate(doc.p.person = num_docs/tot_population)
 
 # Make a plot with all 3 of these things: women rights, muslim percentage
 
 
 # Conclusion is just the linear model without muslim pct, just treatment of women
 
+totplot1 <- plot_data %>% filter(year == 1985) %>% 
+  ggplot(aes(x = muslim_perc, y = women_perc, color = region, label=region)) + 
+  geom_point(aes(size = doc.p.person), alpha = .7) +
+  geom_point(alpha = .8, color = "black") +
+  scale_size_continuous(range = c(6, 25)) +
+  geom_text(aes(label=region),hjust=-.5, vjust=0, colour = 'black') +
+  xlim(0, 1.2) +
+  ylim(0, 3) +
+  labs(x = 'Percentage Muslim', y='Womens Rights Composite Score (1-3 scale)',
+       title = 'Docs per Person (1985) by Womens Rights and Muslim Percentage in a Given Region')
+  totplot1
+saveRDS(totplot1, "./pres_resources/totplot1.RDS")
+
+```
+
+```{r plotData}
+
+mus_only <- plot_data %>% filter(region == "MENA") %>% 
+  ggplot(aes(x = num_docs, y = women_perc, color = year, label=year)) + 
+  geom_point(alpha = .7, size = 5) +
+  geom_point(alpha = .8, color = "black", size = 1) +
+  geom_text(aes(label=year),hjust=-.5, vjust=0, colour = 'black', size=2) +
+  ylim(.6, 1.25) +
+  labs(x = 'Number of Docs / Person', y='Womens Rights Composite Score (1-3 scale)',
+       title = 'Docs per Person (1985) by Womens Rights and Muslim Percentage in a Given Region')
   
+saveRDS(mus_only, "./pres_resources/mus_only.RDS")
+
+west_only <- plot_data %>% filter(region == "West") %>% 
+  ggplot(aes(x = num_docs, y = women_perc, color = year, label=year)) + 
+  geom_point(alpha = .7, size = 5) +
+  geom_point(alpha = .8, color = "black", size = 1) +
+  geom_text(aes(label=year),hjust=-.5, vjust=0, colour = 'black', size=2) +
+  ylim(1.75, 3) +
+  labs(x = 'Number of Docs / Person', y='Womens Rights Composite Score (1-3 scale)',
+       title = 'Docs per Person (1985) by Womens Rights and Muslim Percentage in a Given Region')
+  west_only
+saveRDS(west_only, "./pres_resources/wes_only.RDS")
+```
+
+```{r thequantitylook}
+
+trend_plot <- rt_altered %>% 
+  filter(year > 2001) %>% 
+  filter(region == "MENA") %>% 
+  ggplot(aes(x = women_composite, y = n.binary)) +
+  geom_jitter(alpha = .3) +
+  geom_smooth(method = "lm") +
+  labs(x = "Treatment of Women Composite Score",
+       y = "Number of Articles Written (Binary 0 or 1)",
+       title = "Women Index vs. # Articles in MENA post 9/11")
+
+saveRDS(trend_plot, "./pres_resources/trend_plot.RDS")
+
+```
+
+```{r thequantitylook}
+
+trend_plot2 <- rt_altered %>% 
+  filter(year > 2001) %>% 
+  filter(region == "West") %>% 
+  ggplot(aes(x = women_composite, y = n.binary)) +
+  geom_jitter(alpha = .3) +
+  geom_smooth(method = "lm") +
+  labs(x = "Treatment of Women Composite Score",
+       y = "Number of Articles Written (Binary 0 or 1)",
+       title = "Women Index vs. # Articles in West post 9/11")
+
+saveRDS(trend_plot2, "./pres_resources/trend_plot2.RDS")
+
 ```
 
 # fun table :)
@@ -331,10 +401,31 @@ stargazer(logit5, header=FALSE, label = "table:probit", style = "ajps", title = 
 
 ```
 
-##
+## Article Quantities
 
 ```{r part3}
 
+d1 <- rt_altered %>% 
+  ggplot() +
+  geom_histogram(aes(x = n.docs), bins = 30) +
+  labs(x = "Number of Documents",
+       y = "Number of Articles",
+       title = "Distribution of Article Quantities")
+
+saveRDS(d1, "./pres_resources/histogram1.RDS")
+
+```
+
+```{r part3}
+
+d2 <- rt_altered %>% 
+  ggplot() +
+  geom_histogram(aes(x = n.binary), bins = 3) +
+  labs(x = "Number of Documents",
+       y = "Number of Articles",
+       title = "Distribution of Article Quantities")
+
+saveRDS(d2, "./pres_resources/histogram2.RDS")
 
 ```
 

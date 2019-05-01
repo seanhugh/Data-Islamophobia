@@ -44,6 +44,23 @@ Current news aims to affirm western cultural and political superiority over musl
 <img src="./pres_resources/quantity.png" width="100%">
 --
 ---
+
+# Quantity Hypothesis 1: Middle East vs. West
+
+```{r loadStuff, include=FALSE}
+require(gridExtra)
+```
+
+
+```{r dist12, echo=FALSE, warning=FALSE, fig.width=12}
+p1 <- readRDS("./pres_resources/trend_plot.RDS")
+p2 <- readRDS("./pres_resources/trend_plot2.RDS")
+grid.arrange(p1, p2, ncol=2)
+```
+
+--
+---
+
 # Quantity Hypothesis 2
 <img src="./pres_resources/binary1.png" width="55%">
 
@@ -51,6 +68,28 @@ Current news aims to affirm western cultural and political superiority over musl
 ---
 # Quantity Hypothesis 3
 <img src="./pres_resources/negative1.png" width="65%">
+
+--
+---
+
+# Choice of Distributions: Continous
+
+```{r dist1, echo=FALSE, warning=FALSE, fig.width=12}
+
+readRDS("./pres_resources/histogram1.RDS")
+
+```
+
+--
+---
+
+# Choice of Distributions: Binary
+
+```{r dist2, echo=FALSE, warning=FALSE, fig.width=12}
+
+readRDS("./pres_resources/histogram2.RDS")
+
+```
 
 --
 ---
@@ -152,5 +191,10 @@ readRDS("./pres_resources/women1.RDS")
 # Women's Rights Index
 
 <img src="./pres_resources/women2.png" width="80%">
+
+
+
+
+
 
 
