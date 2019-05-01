@@ -61,6 +61,7 @@ grid.arrange(p1, p2, ncol=2)
 --
 ---
 
+
 # Quantity Hypothesis 2
 <img src="./pres_resources/binary1.png" width="55%">
 
@@ -71,6 +72,7 @@ grid.arrange(p1, p2, ncol=2)
 
 --
 ---
+
 
 # Choice of Distributions: Continous
 
@@ -95,6 +97,24 @@ readRDS("./pres_resources/histogram2.RDS")
 ---
 # Quantity Hypothesis 4
 <img src="./pres_resources/figure3.png" width="80%">
+
+--
+---
+
+# Quantity Hypothesis 1: Middle East vs. West
+
+```{r dist1212312, echo=FALSE, warning=FALSE, fig.width=12}
+readRDS("./pres_resources/mus_only.RDS")
+```
+
+--
+---
+
+# Quantity Hypothesis 1: Middle East vs. West
+
+```{r dist12123, echo=FALSE, warning=FALSE, fig.width=12}
+readRDS("./pres_resources/wes_only.RDS")
+```
 
 --
 ---
