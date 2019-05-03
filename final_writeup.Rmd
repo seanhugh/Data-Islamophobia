@@ -57,6 +57,8 @@ Using 35 years of New York Times and Washington Post data, Terman analyzes the o
 
 * Quantity Hypothesis: The binary sepertion of Muslim Women from "freer" western women (i.e. pushing this narritive). So Muslim women from countries with poor rights records make news, while opposite for non-muslim.
 
+![](./writeup_files/quantity1.png)
+
 * Quality Hypothesis: Quality / Framing Hypothesis: U.S. media coverage of women in Muslim and Middle Eastern countries is obsessed about one issue in particular: women’s rights and gender (in)equality.
 
 For the sake of this paper, we focus on analyzing Terman's findings regarding the Quality Hypothesis (Which will now be referred to as the "hypothesis").
@@ -66,19 +68,68 @@ Generally speaking, Americans view Muslims much less favorably than other religi
 
 #### Anlaysis of Terman's Hypothesis Accounting for War and 9/11
 9/11 and terrorism are clearly driving forces in research into gendered orientalism. I plan to analyze the role of war and terrorism in Terman's Quantity hypothesis. I plan to do this in 2 ways: \newline
-* Remove countries that the US is at war with and run Terman's models
-* Remove articles containing keywords related to acts of terrorism and run Terman's models
-I hypothesize that Terman's results are partly driven by coverage of warzones or terrorist acts, and thus by removing these it will lessen the magnitude of her results.
+1. Remove countries that the US is at war with and run Terman's models
+2. Remove articles containing keywords related to acts of terrorism and run Terman's models
+
+#### Hypothesis
+I hypothesize that Terman's results are partly driven by coverage of war zones or terrorist acts, and thus by removing these it will lessen the magnitude of her results.
 
 # Materials and Methods
 
+#### Terman Study Data
+
+News data is drawn from the LexisNexis databse. All articles containing the subject term “women” in non U.S. countries, published in the New York Times and Washington Post, 1980–2014 were downloaded. Each article is assigned to a single country with its most salient country term, if the term has a relevance score greater than or equal to 85% - articles with a lower relavence score, or with a country focused on the United States are discarded. A total of 4531 documents were included: 3726 from the New York Times and 805 from the Washington Post.
+
+MUSLIM country stuff
+
+OTHER VARIABLES
+
+#### Extension Data 
+
+I create a new dataset which discards articles regarding countries that the US is currently in active military conflict with: Afghanistan, Iraq, Syria, Yemen, Somalia, Libya, and Niger (CITATION).
+
+ELABORATE ON WHY WE CHOSE THESE
+
 # Results
+
+#### Summary of Terman Results
+
+  We can see Terman's results regarding the quantity hypothesis in Appendix Table 1, Appendix Table 2, and Appendix Figure 2. She shows that a lower women's rights index correlates with a higher probability of having an article written in a muslim country, while a higher women's rights index is correlated with a higher probability of having an article written in a non-muslim country (Appendix Figure 2). We can visualize this conclusion in figure 1.
+  
+```{r figure1, include=FALSE}
+library(gridExtra)
+trend_plot <- readRDS('./writeup_files/trend_plot.RDS')
+trend_plot2 <- readRDS('./writeup_files/trend_plot2.RDS')
+```
+```{r figure1out, echo=FALSE, warning=FALSE}
+grid.arrange(trend_plot, trend_plot2, ncol=2)
+
+```
+
+She also runs two models on the data to analyze the significance of several variables on the article count. She first uses a binary article count to account for the right skewing of data and uses a probit analysis of the data (Appendix Table 1). She then uses a full article count and uses a negative binomial analysis of the data (Appendix Table 2). In both cases, we see that all three measures of a country being a "Muslim Country" are significant, and also that a lowered Women's Rights Index results in a higher probabibilt of an article being written in all three cases.
+
+#### Method 1: Removing Countries involved in U.S. military conflicts
+
+I created a new dataset that removed countries at war from the U.S. from Terman's initial dataset. I then repeated Terman's initial models on the dataset.
+
+#### Method 2: Remove Articles involving terrorist activity
 
 # Discussion
 
 # References
 
+Todo
+
 # Acknowledgments
+
+I would like to thank David Kane, Mark Hill, and my Gov 1006 class for providing feedback and assistance on the paper. I would also like to thank Rochelle Terman for providing me with extra information that helped me process and work with the data.
+
+
+
+
+
+
+
 
 
 \pagebreak

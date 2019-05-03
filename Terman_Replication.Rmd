@@ -361,6 +361,7 @@ trend_plot <- rt_altered %>%
 
 
 saveRDS(trend_plot, "./pres_resources/trend_plot.RDS")
+saveRDS(trend_plot, "./writeup_files/trend_plot.RDS")
 
 trend_plot2 <- rt_altered %>% 
   filter(year > 2001) %>% 
@@ -373,6 +374,7 @@ trend_plot2 <- rt_altered %>%
        title = "Women Index vs. # Articles in West post 9/11")
 
 saveRDS(trend_plot2, "./pres_resources/trend_plot2.RDS")
+saveRDS(trend_plot2, "./writeup_files/trend_plot2.RDS")
 
 grid.arrange(trend_plot, trend_plot2, ncol=2)
 
@@ -432,89 +434,19 @@ saveRDS(d2, "./pres_resources/histogram2.RDS")
 
 
 
-```{r edit_data, echo=FALSE, include=FALSE}
-
-########################################
-# Goal is to filter out countries at war
-########################################
-
-# Countries at ware are: Afghanistan, Iraq, Syria, Yemen, Somalia, Libya, and Niger
-
-# Create a list with all country names to remove
-
-country_list <- c("Afghanistan", "Iraq", "Syria", "Yemen", "Somalia", "Libya", "Niger")
-
-# Change country names into codes
-
-country_codes <- countrycode((country_list), "country.name", "cown")
-  
-# Create a new rt dataset with these countries removed
-
-rt_altered_war <- rt_altered %>% 
-  
-  filter(!(ccode %in% country_codes))
-
-```
-
-## Table 1: Probit Analysis of U.S. News Coverage about Women Abroad
-
-```{r tab1m, echo=FALSE}
-
-# MUSLIM MAJORITY
-logit1 <- glm(n.binary ~ count + women_composite*muslim.maj + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt_altered_war, family = binomial(link="probit"), control = list(maxit = 50))
-logit1.se <- coeftest(logit1, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
-
-# MENA
-logit2 <- glm(n.binary ~ count + women_composite*mena + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt_altered_war, family = binomial(link="probit"), control = list(maxit = 50))
-logit2.se <- coeftest(logit2, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
-
-# PERCENT MUSLIM
-logit3 <- glm(n.binary ~ count + women_composite*muslim + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt_altered_war, family = binomial(link="probit"), control = list(maxit = 50))
-logit3.se <- coeftest(logit3, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
-
-```
-
-```{r tab1mOut, echo=FALSE, results='asis'}
-
-# PRINT
-stargazer(logit1, logit2, logit3, header=FALSE, label = "table:probit", style = "ajps", title = "Probit Analysis of U.S. News Coverage about Women Abroad", se = list(logit1.se, logit2.se, logit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Repocountry.yeared (Binary)", covariate.labels=c("Country Repocountry.years", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, .001))
-```
-
-\pagebreak
-
-## Table 2: Negative Binomial Analysis of U.S. News Coverage of Women Abroad
-
-```{r tab2m, results = 'asis', echo=FALSE}
-
-# MUSLIM MAJORITY
-nb1 <- glm.nb(n.docs ~ count + women_composite*muslim.maj + polity2 + domestic9 + log(pop.wdi) +log(gdp.pc.un),data = rt_altered_war)
-nb1.se <- coeftest(nb1, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
-
-# MENA
-nb2 <- glm.nb(n.docs ~ count + women_composite*mena + polity2 + domestic9 + log(pop.wdi) +log(gdp.pc.un),data = rt_altered_war)
-nb2.se <- coeftest(nb2, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
-
-# MUSLIM PERCENTAGE
-nb3 <- glm.nb(n.docs ~ count + women_composite*muslim + polity2 + domestic9 + log(pop.wdi) +log(gdp.pc.un),data = rt_altered_war)
-nb3.se <- coeftest(nb3, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
-
-# PRINT
-stargazer(nb1, nb2, nb3, label = "table:negbin", header=FALSE, title = "Negative Binomial Analysis of U.S. News Coverage about Women Abroad", style = "ajps", se = list(nb1.se, nb2.se, nb3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Reported (Count)", covariate.labels=c("Country Reports", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, 0.001))
-
-```
-
-\pagebreak
-
-## Figure 2: Marginal Effects of Women's Rights Index on Reported (Count)
-
-```{r fig2m, echo=FALSE}
-interaction_plot_binary(nb1, effect="women_composite", moderator="muslim.maj", interaction="women_composite:muslim.maj", factor_labels=c("Not Muslim Majority","Muslim Majority"), xlabel="", ylabel="Marginal Effect of Women's Rights on Coverage", title="")
-```
 
 
 
 
+
+
+
+
+
+
+###########
 # Appendix
+###########
 
 ## Table 1: Probit Analysis of U.S. News Coverage of Women Abroad
 
@@ -681,8 +613,236 @@ for (i in c(3,7,9,14)){
 
 ```
 
+
+
+
+
+
+
+
+
+
+############
+# War Stuff
+############
+
+
+```{r edit_data, echo=FALSE, include=FALSE}
+
+########################################
+# Goal is to filter out countries at war
+########################################
+
+# Countries at ware are: Afghanistan, Iraq, Syria, Yemen, Somalia, Libya, and Niger
+
+# Create a list with all country names to remove
+
+country_list <- c("Afghanistan", "Iraq", "Syria", "Yemen", "Somalia", "Libya", "Niger")
+
+# Change country names into codes
+
+country_codes <- countrycode((country_list), "country.name", "cown")
+  
+# Create a new rt dataset with these countries removed
+
+rt_altered_war <- rt_altered %>% 
+  
+  filter(!(ccode %in% country_codes))
+
+```
+
+## Table 1: Probit Analysis of U.S. News Coverage about Women Abroad
+
+```{r tab1m, echo=FALSE}
+
+# MUSLIM MAJORITY
+wlogit1 <- glm(n.binary ~ count + women_composite*muslim.maj + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt_altered_war, family = binomial(link="probit"), control = list(maxit = 50))
+wlogit1.se <- coeftest(logit1, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+
+# MENA
+wlogit2 <- glm(n.binary ~ count + women_composite*mena + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt_altered_war, family = binomial(link="probit"), control = list(maxit = 50))
+wlogit2.se <- coeftest(logit2, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+
+# PERCENT MUSLIM
+wlogit3 <- glm(n.binary ~ count + women_composite*muslim + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt_altered_war, family = binomial(link="probit"), control = list(maxit = 50))
+wlogit3.se <- coeftest(logit3, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+
+```
+
+```{r tab1mOut, echo=FALSE, results='asis'}
+
+# PRINT
+stargazer(wlogit1, wlogit2, wlogit3, header=FALSE, label = "table:probit", style = "ajps", title = "Probit Analysis of U.S. News Coverage about Women Abroad", se = list(wlogit1.se, wlogit2.se, wlogit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Repocountry.yeared (Binary)", covariate.labels=c("Country Repocountry.years", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, .001))
+```
+
+\pagebreak
+
+## Table 2: Negative Binomial Analysis of U.S. News Coverage of Women Abroad
+
+```{r tab2m, results = 'asis', echo=FALSE}
+
+# MUSLIM MAJORITY
+wnb1 <- glm.nb(n.docs ~ count + women_composite*muslim.maj + polity2 + domestic9 + log(pop.wdi) +log(gdp.pc.un),data = rt_altered_war)
+wnb1.se <- coeftest(nb1, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+
+# MENA
+wnb2 <- glm.nb(n.docs ~ count + women_composite*mena + polity2 + domestic9 + log(pop.wdi) +log(gdp.pc.un),data = rt_altered_war)
+wnb2.se <- coeftest(nb2, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+
+# MUSLIM PERCENTAGE
+wnb3 <- glm.nb(n.docs ~ count + women_composite*muslim + polity2 + domestic9 + log(pop.wdi) +log(gdp.pc.un),data = rt_altered_war)
+wnb3.se <- coeftest(nb3, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+
+# PRINT
+stargazer(wnb1, wnb2, wnb3, label = "table:negbin", header=FALSE, title = "Negative Binomial Analysis of U.S. News Coverage about Women Abroad", style = "ajps", se = list(wnb1.se, wnb2.se, wnb3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Reported (Count)", covariate.labels=c("Country Reports", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, 0.001))
+
+```
+
+\pagebreak
+
+## Figure 2: Marginal Effects of Women's Rights Index on Reported (Count)
+
+```{r interactionPlot, include=FALSE}
+
+interaction_plot_binary <- function(model, effect, moderator, interaction, varcov="default", conf=.95, title="Marginal effects plot", xlabel="Value of moderator", ylabel="Estimated marginal coefficient", factor_labels=c(0,1)){
+  
+  # Extract Variance Covariance matrix
+  if (varcov == "default"){
+    covMat = vcov(model)
+  }else{
+    covMat = varcov
+  }
+  
+  # Extract the data frame of the model
+  mod_frame = model.frame(model)
+  
+  # Get coefficients of variables
+  beta_1 = model$coefficients[[effect]]
+  beta_3 = model$coefficients[[interaction]]
+  
+  # Create list of moderator values at which marginal effect is evaluated
+  x_2 <- c(0,1)
+  
+  # Compute marginal effects
+  delta_1 = beta_1 + beta_3*x_2
+  
+  # Compute variances
+  var_1 = covMat[effect,effect] + (x_2^2)*covMat[interaction, interaction] + 2*x_2*covMat[effect, interaction]
+  
+  # Standard errors
+  se_1 = sqrt(var_1)
+  
+  ames_binary<-list(delta_1,se_1)
+  
+  # Upper and lower confidence bounds
+  z_score = qnorm(1 - ((1 - conf)/2))
+  upper_bound = delta_1 + z_score*se_1
+  lower_bound = delta_1 - z_score*se_1
+  
+  # Determine the bounds of the graphing area
+  max_y = max(upper_bound)
+  min_y = min(lower_bound)
+  
+  myDataFrame <- data.frame(x_2, delta_1, upper_bound, lower_bound) 
+  return(myDataFrame)
+  
+  # Initialize plotting window
+  plot(x=c(), y=c(), ylim=c(min_y, max_y), xlim=c(-.5, 1.5), xlab=xlabel, ylab=ylabel, main=title, xaxt="n")
+  
+  
+  # Plot points of estimated effects
+  points(x=x_2, y=delta_1, pch=16)
+  
+  # Plot lines of confidence intervals
+  lines(x=c(x_2[1], x_2[1]), y=c(upper_bound[1], lower_bound[1]), lty=1)
+  points(x=c(x_2[1], x_2[1]), y=c(upper_bound[1], lower_bound[1]), pch=c(25,24), bg="black")
+  lines(x=c(x_2[2], x_2[2]), y=c(upper_bound[2], lower_bound[2]), lty=1)
+  points(x=c(x_2[2], x_2[2]), y=c(upper_bound[2], lower_bound[2]), pch=c(25,24), bg="black")
+  
+  
+  # Label the axis
+  axis(side=1, at=c(0,1), labels=factor_labels)
+  
+  # Add a dashed horizontal line for zero
+  abline(h=0, lty=3)
+  
+}
+
+```
+
+```{r fig2m, echo=FALSE}
+
+##########################################
+# Create Synthesized Plots from our models
+##########################################
+
+myData <- interaction_plot_binary(wnb1, effect="women_composite", moderator="muslim.maj", interaction="women_composite:muslim.maj", factor_labels=c("Not Muslim Majority","Muslim Majority"), xlabel="", ylabel="Marginal Effect of Women's Rights on Coverage", title="")
+
+myData2 <- interaction_plot_binary(nb1, effect="women_composite", moderator="muslim.maj", interaction="women_composite:muslim.maj", factor_labels=c("Not Muslim Majority","Muslim Majority"), xlabel="", ylabel="Marginal Effect of Women's Rights on Coverage", title="")
+
+bar_size = .03
+displace_size = .05
+colors <- c("blue", "red")
+
+# PLOT WITH JUST THE DATA FROM THE WAR REMOVED ONES
+
+ggplot(myData) +
+  
+  # Add Points for Centers
+  geom_point(aes(x = x_2, y = delta_1), size = 2) +
+  
+  geom_segment(aes(x = x_2, y = lower_bound, xend = x_2, yend = upper_bound)) + 
+  
+  geom_segment(aes(x = x_2 - bar_size, y = lower_bound, xend = x_2 + bar_size, yend = lower_bound)) + 
+  
+  geom_segment(aes(x = x_2 - bar_size, y = upper_bound, xend = x_2 + bar_size, yend = upper_bound)) 
+
+# ADDING IN THE NON-WAR REMOVED ONES TO COMPARE
+
+colnames(myData2) <- paste("Y", colnames(myData2), sep = "_")
+colnames(myData) <- paste("X", colnames(myData), sep = "_")
+
+cbind(myData, myData2) %>% 
+  
+  ggplot() +
+  
+   # Add Points for Centers
+  geom_point(aes(x = X_x_2, y = X_delta_1, color = colors[1]), size = 2) +
+  
+  geom_segment(aes(x = X_x_2, y = X_lower_bound, xend = X_x_2, yend = X_upper_bound, color = colors[1])) + 
+  
+  geom_segment(aes(x = X_x_2 - bar_size, y = X_lower_bound, xend = X_x_2 + bar_size, yend = X_lower_bound, color = colors[1])) + 
+  
+  geom_segment(aes(x = X_x_2 - bar_size, y = X_upper_bound, xend = X_x_2 + bar_size, yend = X_upper_bound, color = colors[1])) +
+  
+    # Add Points for Centers
+  geom_point(aes(x = Y_x_2 + displace_size, y = Y_delta_1, color = colors[2]), size = 2) +
+  
+  geom_segment(aes(x = Y_x_2 + displace_size, y = Y_lower_bound, xend = Y_x_2 + displace_size, yend = Y_upper_bound, color = colors[2])) + 
+  
+  geom_segment(aes(x = Y_x_2 - bar_size + displace_size, y = Y_lower_bound, xend = Y_x_2 + bar_size + displace_size, yend = Y_lower_bound, color = colors[2])) + 
+  
+  geom_segment(aes(x = Y_x_2 - bar_size + displace_size, y = Y_upper_bound, xend = Y_x_2 + bar_size + displace_size, yend = Y_upper_bound, color = colors[2])) +
+  
+  labs(color = "Model",
+       x = "",
+       y = "Marginal Effect of Women's Rights on Coverage") +
+  
+  scale_color_manual(labels = c("War Adjusted", "All Data"), values = c("blue", "red"))
+  
+```
+
+
+
+
+
+
+
+
+
 ```{r saveApen, include=FALSE}
 
+# Appendix File
 saveRDS(apent11, './writeup_files/apent11.RDS')
 saveRDS(apent12, './writeup_files/apent12.RDS')
 saveRDS(apent13, './writeup_files/apent13.RDS')
@@ -706,5 +866,7 @@ saveRDS(apen2, './writeup_files/apen2.RDS')
 saveRDS(apen3, './writeup_files/apen3.RDS')
 saveRDS(apen41, './writeup_files/apen41.RDS')
 saveRDS(apen42, './writeup_files/apen42.RDS')
+
+# Main Paper File
 
 ```
