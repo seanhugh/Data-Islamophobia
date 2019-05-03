@@ -110,7 +110,7 @@ She also runs two models on the data to analyze the significance of several vari
 
 #### Method 1: Removing Countries involved in U.S. military conflicts
 
-I created a new dataset that removed countries at war from the U.S. from Terman's initial dataset. I then repeated Terman's initial models on the dataset.
+I created a new dataset that removed countries at war from the U.S. from Terman's initial dataset. I then repeated Terman's initial models on the dataset. 
 
 #### Method 2: Remove Articles involving terrorist activity
 

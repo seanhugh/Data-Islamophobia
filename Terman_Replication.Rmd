@@ -770,74 +770,57 @@ interaction_plot_binary <- function(model, effect, moderator, interaction, varco
 
 ```
 
-```{r fig2m, echo=FALSE}
+```{r seanGraph, echo=FALSE}
 
 ##########################################
 # Create Synthesized Plots from our models
 ##########################################
 
-myData <- interaction_plot_binary(wnb1, effect="women_composite", moderator="muslim.maj", interaction="women_composite:muslim.maj", factor_labels=c("Not Muslim Majority","Muslim Majority"), xlabel="", ylabel="Marginal Effect of Women's Rights on Coverage", title="")
-
-myData2 <- interaction_plot_binary(nb1, effect="women_composite", moderator="muslim.maj", interaction="women_composite:muslim.maj", factor_labels=c("Not Muslim Majority","Muslim Majority"), xlabel="", ylabel="Marginal Effect of Women's Rights on Coverage", title="")
+sean_graph <- function(models, labels, effect, moderator, interaction, varcov="default", conf=.95, title="Marginal effects plot", xlabel="Value of moderator", ylabel="Estimated marginal coefficient", factor_labels=c(0,1)){
 
 bar_size = .03
-displace_size = .05
-colors <- c("blue", "red")
+offset = .05
 
-# PLOT WITH JUST THE DATA FROM THE WAR REMOVED ONES
+myData <- data.frame(x_2 = c(), delta_1 = c(), upper_bound = c(), lower_bound = c(), model = c()) 
 
-ggplot(myData) +
+for(i in c(1,2)){
+  
+  temp_plot <- interaction_plot_binary(models[[i]], effect="women_composite", moderator="muslim.maj", interaction="women_composite:muslim.maj", factor_labels=c("Not Muslim Majority","Muslim Majority"), xlabel="", ylabel="Marginal Effect of Women's Rights on Coverage", title="")
+  
+  temp_plot_alt <- temp_plot %>% 
+  mutate(model = labels[i]) %>% 
+  mutate(offset = i*displace_size)
+  
+  myData <- rbind(myData, temp_plot_alt)
+
+}
+ 
+# Plot all Data together
+
+plot1 <- ggplot(myData) +
   
   # Add Points for Centers
-  geom_point(aes(x = x_2, y = delta_1), size = 2) +
+  geom_point(aes(x = x_2 + offset, y = delta_1, color = model), size = 2) +
   
-  geom_segment(aes(x = x_2, y = lower_bound, xend = x_2, yend = upper_bound)) + 
+  geom_segment(aes(x = x_2 + offset, y = lower_bound, xend = x_2 + offset, yend = upper_bound, color = model)) + 
   
-  geom_segment(aes(x = x_2 - bar_size, y = lower_bound, xend = x_2 + bar_size, yend = lower_bound)) + 
+  geom_segment(aes(x = x_2 - bar_size + offset, y = lower_bound, xend = x_2 + bar_size + offset, yend = lower_bound, color = model)) + 
   
-  geom_segment(aes(x = x_2 - bar_size, y = upper_bound, xend = x_2 + bar_size, yend = upper_bound)) 
+  geom_segment(aes(x = x_2 - bar_size + offset, y = upper_bound, xend = x_2 + bar_size + offset, yend = upper_bound, color = model)) +
+  
+  labs(title = title, x = xlabel, y = ylabel)
 
-# ADDING IN THE NON-WAR REMOVED ONES TO COMPARE
+return(plot1)
 
-colnames(myData2) <- paste("Y", colnames(myData2), sep = "_")
-colnames(myData) <- paste("X", colnames(myData), sep = "_")
+}
 
-cbind(myData, myData2) %>% 
-  
-  ggplot() +
-  
-   # Add Points for Centers
-  geom_point(aes(x = X_x_2, y = X_delta_1, color = colors[1]), size = 2) +
-  
-  geom_segment(aes(x = X_x_2, y = X_lower_bound, xend = X_x_2, yend = X_upper_bound, color = colors[1])) + 
-  
-  geom_segment(aes(x = X_x_2 - bar_size, y = X_lower_bound, xend = X_x_2 + bar_size, yend = X_lower_bound, color = colors[1])) + 
-  
-  geom_segment(aes(x = X_x_2 - bar_size, y = X_upper_bound, xend = X_x_2 + bar_size, yend = X_upper_bound, color = colors[1])) +
-  
-    # Add Points for Centers
-  geom_point(aes(x = Y_x_2 + displace_size, y = Y_delta_1, color = colors[2]), size = 2) +
-  
-  geom_segment(aes(x = Y_x_2 + displace_size, y = Y_lower_bound, xend = Y_x_2 + displace_size, yend = Y_upper_bound, color = colors[2])) + 
-  
-  geom_segment(aes(x = Y_x_2 - bar_size + displace_size, y = Y_lower_bound, xend = Y_x_2 + bar_size + displace_size, yend = Y_lower_bound, color = colors[2])) + 
-  
-  geom_segment(aes(x = Y_x_2 - bar_size + displace_size, y = Y_upper_bound, xend = Y_x_2 + bar_size + displace_size, yend = Y_upper_bound, color = colors[2])) +
-  
-  labs(color = "Model",
-       x = "",
-       y = "Marginal Effect of Women's Rights on Coverage") +
-  
-  scale_color_manual(labels = c("War Adjusted", "All Data"), values = c("blue", "red"))
-  
 ```
 
+```{r fig2m, echo = FALSE}
 
+sean_graph(list(nb1, wnb1), labels = c("No Warzones", "All Data"), title = "Marginal effects plot", xlabel = "Muslim Majority", ylabel = "Marginal Effect of Women's Rights on Coverage")
 
-
-
-
-
+```
 
 
 ```{r saveApen, include=FALSE}
