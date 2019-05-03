@@ -1,0 +1,164 @@
+---
+title: Analysis of "Islamophobia and Media Portrayals of Muslim Women"
+author: "Sean Hughes"
+date: "April 13, 2019"
+output:
+ pdf_document:
+  md_extension: +raw_tex
+header-includes:
+    - \usepackage{caption}
+    - \usepackage{float}
+    - \usepackage{lipsum}
+---
+
+\captionsetup[table]{labelformat=empty}
+
+```{r libraries, include=FALSE}
+rm(list=ls())
+
+library(tidyverse)
+library(dplyr)
+
+require(plyr)
+require("MASS")
+require("xtable")
+require(plm) # panel data operations
+require(ggplot2) # visualizations
+require(stargazer) # pretty tables
+require(sandwich) # for robust standard errors
+require(lmtest) # for robust standard errors
+require(sampleSelection) # for heckman correction
+require(mfx) # for marginal effects
+require(Matching) # required by the interaction_plots.R script below
+require(stm)
+library(scales)
+library(countrycode)
+library(gt)
+library(xaringan)
+source("dataverse_files/interaction_plots.R") # for interaction plots; see paper for attribution
+
+# Load Data
+load("dataverse_files/stm.RData")
+
+```
+
+# Abstract
+
+Does news content by United States news organizations affirm western cultural and political superiority over muslim countries? In her paper, *An Analysis of Islamophobia and Media Portrayals of Muslim Women: A Computational Text Analysis of US News Coverage*, Rochelle Terman analyzes this claim. She determines that US news coverage of women abroad is driven by confirmation bias, whereby journalists are more likely to report on women living in Muslim and Middle Eastern countries if their rights are violated, but will report on women in other societies when their rights are respected. She uses 35 years of New York Times and Washington Post data to analyze this claim, and determines that U.S. Media spreads the perception that Muslims are distinctly sexist. I hypothesise that this result is in part due to the inclusion of countries that the United States is in military confilct with. I remove these countries from the data set and test her claims under these new condition.
+
+# Introduction
+
+#### Cultural Threat
+Why has public hostility towards muslims been on the rise in the United States? The link between Muslims and terrorism has been considered a leading cause of this hostility; however, recent findings suggest that the perception of Muslims as a *cultural* threat may be more deleterious than their association with terrorism. While studies have systematically examined the origins of this perception in media portrayals, few studies have systematically examined the origins of this perception as a cultural threat in media portrayals. Terman's study draws on the theory of gendered orientalism to identify a central media facet that perpetuates the stereotype of Muslims as a cultural threat, namely representations of women and gender inequality.
+
+#### Terman's Quantity Hypothesis
+Using 35 years of New York Times and Washington Post data, Terman analyzes the origins of *cultural* threat regarding the representations of women and gender inequality and has two hypothesis: 
+\newline
+
+* Quantity Hypothesis: The binary sepertion of Muslim Women from "freer" western women (i.e. pushing this narritive). So Muslim women from countries with poor rights records make news, while opposite for non-muslim.
+
+* Quality Hypothesis: Quality / Framing Hypothesis: U.S. media coverage of women in Muslim and Middle Eastern countries is obsessed about one issue in particular: women’s rights and gender (in)equality.
+
+For the sake of this paper, we focus on analyzing Terman's findings regarding the Quality Hypothesis (Which will now be referred to as the "hypothesis").
+
+#### 9/11 and Terrorism
+Generally speaking, Americans view Muslims much less favorably than other religious and racial minorities (Pew Research Center 2014). The most common explanation for this disfavor centers on the perceived link between Muslims and terrorism in the American public consciousness, incited by the attacks on 9/11 and the subsequent War on Terror. Since 9/11, the study of orientalism (referring to the representations of muslim women) has undergone a significant revival, driven by scholars who see “neo-orientalism” at work in the War on Terror and related political developments.
+
+#### Anlaysis of Terman's Hypothesis Accounting for War and 9/11
+9/11 and terrorism are clearly driving forces in research into gendered orientalism. I plan to analyze the role of war and terrorism in Terman's Quantity hypothesis. I plan to do this in 2 ways: \newline
+* Remove countries that the US is at war with and run Terman's models
+* Remove articles containing keywords related to acts of terrorism and run Terman's models
+I hypothesize that Terman's results are partly driven by coverage of warzones or terrorist acts, and thus by removing these it will lessen the magnitude of her results.
+
+# Materials and Methods
+
+# Results
+
+# Discussion
+
+# References
+
+# Acknowledgments
+
+
+\pagebreak
+
+# Appendix
+
+```{r t1, echo=FALSE, results='asis'}
+
+l1 <- readRDS('./writeup_files/apent11.RDS')
+l2 <- readRDS('./writeup_files/apent12.RDS')
+l3 <- readRDS('./writeup_files/apent13.RDS')
+logit1.se <- readRDS('./writeup_files/apent14.RDS')
+logit2.se <- readRDS('./writeup_files/apent15.RDS')
+logit3.se <- readRDS('./writeup_files/apent16.RDS')
+
+stargazer(l1, l2, l3, header=FALSE, label = "table:probit", style = "ajps", title = "Probit Analysis of U.S. News Coverage about Women Abroad", se = list(logit1.se, logit2.se, logit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Repocountry.yeared (Binary)", covariate.labels=c("Country Repocountry.years", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, .001))
+
+
+```
+
+```{r t2, echo=FALSE, results='asis'}
+
+nb1 <- readRDS('./writeup_files/apent21.RDS')
+nb2 <- readRDS('./writeup_files/apent22.RDS')
+nb3 <- readRDS('./writeup_files/apent23.RDS')
+nb1.se <- readRDS('./writeup_files/apent24.RDS')
+nb2.se <- readRDS('./writeup_files/apent25.RDS')
+nb3.se <- readRDS('./writeup_files/apent26.RDS')
+
+apent2 <- stargazer(nb1, nb2, nb3, label = "table:negbin", header=FALSE, title = "Negative Binomial Analysis of U.S. News Coverage about Women Abroad", style = "ajps", se = list(nb1.se, nb2.se, nb3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Reported (Count)", covariate.labels=c("Country Reports", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, 0.001))
+
+
+```
+
+```{r t3, echo=FALSE, results='asis'}
+
+dat <- readRDS('./writeup_files/apent3.RDS')
+
+print(xtable(dat))
+
+```
+
+```{r t4, echo=FALSE, results='asis'}
+
+heckit1 <- readRDS('./writeup_files/apent41.RDS')
+heckit2 <- readRDS('./writeup_files/apent42.RDS')
+heckit3 <- readRDS('./writeup_files/apent43.RDS')
+heckit1.se <- readRDS('./writeup_files/apent44.RDS')
+heckit2.se <- readRDS('./writeup_files/apent45.RDS')
+heckit3.se <- readRDS('./writeup_files/apent46.RDS')
+
+stargazer(heckit1, heckit2, heckit3, header=FALSE,label = "table:heckit", style = "ajps", title = "Two-Step Analysis of Rights Focus in U.S. News Coverage about Women Abroad", se = list(heckit1.se, heckit2.se, heckit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Rights Focus", covariate.labels=c("Intercept", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Physical Integrity Rights"), star.cutoffs = c(0.05, 0.01, 0.001))
+
+```
+
+```{r f2, echo=FALSE}
+
+nb1 <- readRDS('./writeup_files/apen2.RDS')
+
+interaction_plot_binary(nb1, effect="women_composite", moderator="muslim.maj", interaction="women_composite:muslim.maj", factor_labels=c("Not Muslim Majority","Muslim Majority"), xlabel="", ylabel="Marginal Effect of Women's Rights on Coverage", title="")
+
+```
+
+```{r f3, echo=FALSE}
+
+model <- readRDS('./writeup_files/apen3.RDS')
+
+plot.STM(model,type="summary",custom.labels=labels,main="")
+
+```
+
+```{r f4, echo=FALSE}
+
+prep <- readRDS('./writeup_files/apen41.RDS')
+regions <- readRDS('./writeup_files/apen42.RDS')
+
+par(mfrow=c(2,2))
+# print prevalence graphs for 4 topics
+for (i in c(3,7,9,14)){
+  plot.estimateEffect(prep,"REGION",method="pointestimate",topics=i,printlegend=TRUE,labeltype="custom",custom.labels=regions,main=labels[i],ci.level=.95,nsims=100)
+}
+
+```

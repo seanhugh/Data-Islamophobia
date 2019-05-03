@@ -35,26 +35,9 @@ library(scales)
 library(countrycode)
 library(gt)
 library(xaringan)
+require(gridExtra)
 source("dataverse_files/interaction_plots.R") # for interaction plots; see paper for attribution
 ```
-
-# Abstract
-
-Rochelle Terman uses NLP to analyze recent...
-
-# Introduction
-
-# Materials and Methods
-
-# Results
-
-# Discussion
-
-# References
-
-# Acknowledgments
-
-\pagebreak
 
 ```{r dataPrep, include=FALSE}
 
@@ -121,7 +104,7 @@ rt %>% arrange(desc(gdp.pc.un))
 
 ```
 
-```{r cleanData, echo=FALSE}
+```{r cleanData, echo=FALSE, include=FALSE}
 
 # The data colums are the following:
 
@@ -186,6 +169,11 @@ rt_altered <- rt %>%
   mutate(year = as.numeric(as.character(year)))
               
 ```
+
+# Table 1 & 2 Charts
+
+
+# Data Analysis Charts
 
 
 ```{r analyzeData1, echo=FALSE}
@@ -299,7 +287,7 @@ plot_data <- rt_altered %>%
   mutate(num_muslims = muslim*pop.wdi,
          women_treat_tot = women_composite*pop.wdi) %>% 
   group_by(region, year) %>% 
-  summarize(num_docs = sum(n.docs),
+  dplyr::summarize(num_docs = sum(n.docs),
             tot_muslims = sum(num_muslims),
             tot_population = sum(pop.wdi),
             tot_women_treat = sum(women_treat_tot)) %>% 
@@ -311,7 +299,6 @@ plot_data <- rt_altered %>%
 
 
 # Conclusion is just the linear model without muslim pct, just treatment of women
-
 totplot1 <- plot_data %>% filter(year == 1985) %>% 
   ggplot(aes(x = muslim_perc, y = women_perc, color = region, label=region)) + 
   geom_point(aes(size = doc.p.person), alpha = .7) +
@@ -322,12 +309,12 @@ totplot1 <- plot_data %>% filter(year == 1985) %>%
   ylim(0, 3) +
   labs(x = 'Percentage Muslim', y='Womens Rights Composite Score (1-3 scale)',
        title = 'Docs per Person (1985) by Womens Rights and Muslim Percentage in a Given Region')
-  totplot1
+
 saveRDS(totplot1, "./pres_resources/totplot1.RDS")
 
 ```
 
-```{r plotData}
+```{r plotData, echo=FALSE}
 
 mus_only <- plot_data %>% filter(region == "MENA") %>% 
   mutate(post911 = case_when(
@@ -360,7 +347,7 @@ west_only <- plot_data %>% filter(region == "West") %>%
 saveRDS(west_only, "./pres_resources/wes_only.RDS")
 ```
 
-```{r thequantitylook}
+```{r thequantitylook2, echo=FALSE, warnings=FALSE}
 
 trend_plot <- rt_altered %>% 
   filter(year > 2001) %>% 
@@ -375,10 +362,6 @@ trend_plot <- rt_altered %>%
 
 saveRDS(trend_plot, "./pres_resources/trend_plot.RDS")
 
-```
-
-```{r thequantitylook}
-
 trend_plot2 <- rt_altered %>% 
   filter(year > 2001) %>% 
   filter(region == "West") %>% 
@@ -391,11 +374,16 @@ trend_plot2 <- rt_altered %>%
 
 saveRDS(trend_plot2, "./pres_resources/trend_plot2.RDS")
 
+grid.arrange(trend_plot, trend_plot2, ncol=2)
+
 ```
 
-# fun table :)
+```{r printToPDF, include=FALSE}
 
-\pagebreak
+# or just pass the HTML output file path to chrome_print()
+#pagedown::chrome_print("presentation.html")
+
+```
 
 ```{r tab1111, echo=FALSE, include=FALSE}
 
@@ -403,16 +391,16 @@ saveRDS(trend_plot2, "./pres_resources/trend_plot2.RDS")
 logit5 <- lm(women_composite ~ muslim + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt )
 
 ```
-```{r tab111ut1, echo=FALSE, results='asis'}
+```{r tab111ut1, echo=FALSE, results='asis', include=FALSE}
 
 # PRINT
-stargazer(logit5, header=FALSE, label = "table:probit", style = "ajps", title = "Probit Analysis of U.S. News Coverage about Women Abroad", se = list(logit1.se, logit2.se, logit3.se), notes="Robust standard errors clustered on country appear in parentheses.", star.cutoffs = c(0.05, 0.01, .001))
+stargazer(logit5, header=FALSE, label = "table:probit", style = "ajps", title = "Probit Analysis of U.S. News Coverage about Women Abroad", notes="Robust standard errors clustered on country appear in parentheses.", star.cutoffs = c(0.05, 0.01, .001))
 
 ```
 
 ## Article Quantities
 
-```{r part3}
+```{r part31, include=FALSE}
 
 d1 <- rt_altered %>% 
   ggplot() +
@@ -425,7 +413,7 @@ saveRDS(d1, "./pres_resources/histogram1.RDS")
 
 ```
 
-```{r part3}
+```{r part3, include=FALSE}
 
 d2 <- rt_altered %>% 
   ggplot() +
@@ -437,6 +425,93 @@ d2 <- rt_altered %>%
 saveRDS(d2, "./pres_resources/histogram2.RDS")
 
 ```
+
+
+
+
+
+
+
+```{r edit_data, echo=FALSE, include=FALSE}
+
+########################################
+# Goal is to filter out countries at war
+########################################
+
+# Countries at ware are: Afghanistan, Iraq, Syria, Yemen, Somalia, Libya, and Niger
+
+# Create a list with all country names to remove
+
+country_list <- c("Afghanistan", "Iraq", "Syria", "Yemen", "Somalia", "Libya", "Niger")
+
+# Change country names into codes
+
+country_codes <- countrycode((country_list), "country.name", "cown")
+  
+# Create a new rt dataset with these countries removed
+
+rt_altered_war <- rt_altered %>% 
+  
+  filter(!(ccode %in% country_codes))
+
+```
+
+## Table 1: Probit Analysis of U.S. News Coverage about Women Abroad
+
+```{r tab1m, echo=FALSE}
+
+# MUSLIM MAJORITY
+logit1 <- glm(n.binary ~ count + women_composite*muslim.maj + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt_altered_war, family = binomial(link="probit"), control = list(maxit = 50))
+logit1.se <- coeftest(logit1, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+
+# MENA
+logit2 <- glm(n.binary ~ count + women_composite*mena + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt_altered_war, family = binomial(link="probit"), control = list(maxit = 50))
+logit2.se <- coeftest(logit2, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+
+# PERCENT MUSLIM
+logit3 <- glm(n.binary ~ count + women_composite*muslim + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt_altered_war, family = binomial(link="probit"), control = list(maxit = 50))
+logit3.se <- coeftest(logit3, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+
+```
+
+```{r tab1mOut, echo=FALSE, results='asis'}
+
+# PRINT
+stargazer(logit1, logit2, logit3, header=FALSE, label = "table:probit", style = "ajps", title = "Probit Analysis of U.S. News Coverage about Women Abroad", se = list(logit1.se, logit2.se, logit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Repocountry.yeared (Binary)", covariate.labels=c("Country Repocountry.years", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, .001))
+```
+
+\pagebreak
+
+## Table 2: Negative Binomial Analysis of U.S. News Coverage of Women Abroad
+
+```{r tab2m, results = 'asis', echo=FALSE}
+
+# MUSLIM MAJORITY
+nb1 <- glm.nb(n.docs ~ count + women_composite*muslim.maj + polity2 + domestic9 + log(pop.wdi) +log(gdp.pc.un),data = rt_altered_war)
+nb1.se <- coeftest(nb1, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+
+# MENA
+nb2 <- glm.nb(n.docs ~ count + women_composite*mena + polity2 + domestic9 + log(pop.wdi) +log(gdp.pc.un),data = rt_altered_war)
+nb2.se <- coeftest(nb2, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+
+# MUSLIM PERCENTAGE
+nb3 <- glm.nb(n.docs ~ count + women_composite*muslim + polity2 + domestic9 + log(pop.wdi) +log(gdp.pc.un),data = rt_altered_war)
+nb3.se <- coeftest(nb3, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+
+# PRINT
+stargazer(nb1, nb2, nb3, label = "table:negbin", header=FALSE, title = "Negative Binomial Analysis of U.S. News Coverage about Women Abroad", style = "ajps", se = list(nb1.se, nb2.se, nb3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Reported (Count)", covariate.labels=c("Country Reports", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, 0.001))
+
+```
+
+\pagebreak
+
+## Figure 2: Marginal Effects of Women's Rights Index on Reported (Count)
+
+```{r fig2m, echo=FALSE}
+interaction_plot_binary(nb1, effect="women_composite", moderator="muslim.maj", interaction="women_composite:muslim.maj", factor_labels=c("Not Muslim Majority","Muslim Majority"), xlabel="", ylabel="Marginal Effect of Women's Rights on Coverage", title="")
+```
+
+
 
 
 # Appendix
@@ -464,6 +539,13 @@ logit3.se <- coeftest(logit3, vcov=function(x) vcovHC(x, cluster="group", type="
 # PRINT
 stargazer(logit1, logit2, logit3, header=FALSE, label = "table:probit", style = "ajps", title = "Probit Analysis of U.S. News Coverage about Women Abroad", se = list(logit1.se, logit2.se, logit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Repocountry.yeared (Binary)", covariate.labels=c("Country Repocountry.years", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, .001))
 
+apent11 <-logit1
+apent12 <-logit2
+apent13 <-logit3
+apent14 <-logit1.se
+apent15 <-logit2.se
+apent16 <-logit3.se
+
 ```
 
 \pagebreak
@@ -485,7 +567,14 @@ nb3 <- glm.nb(n.docs ~ count + women_composite*muslim + polity2 + domestic9 + lo
 nb3.se <- coeftest(nb3, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
 
 # PRINT
-stargazer(nb1, nb2, nb3, label = "table:negbin", header=FALSE, title = "Negative Binomial Analysis of U.S. News Coverage about Women Abroad", style = "ajps", se = list(nb1.se, nb2.se, nb3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Reported (Count)", covariate.labels=c("Country Reports", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, 0.001))
+apent2 <- stargazer(nb1, nb2, nb3, label = "table:negbin", header=FALSE, title = "Negative Binomial Analysis of U.S. News Coverage about Women Abroad", style = "ajps", se = list(nb1.se, nb2.se, nb3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Reported (Count)", covariate.labels=c("Country Reports", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, 0.001))
+
+apent21 <- nb1
+apent22 <- nb2
+apent23 <- nb3
+apent24 <- nb1.se
+apent25 <- nb2.se
+apent26 <- nb3.se
 
 ```
 
@@ -506,6 +595,8 @@ dat$FREX <- apply( frex, 1 , paste , collapse = ", " )
 # export to html
 
 print(xtable(dat))
+
+apent3 <- dat
 ```
 
 
@@ -536,6 +627,14 @@ heckit3.se = coeftest(heckit3$lm, vcov=function(x) vcovHC(x, cluster="group", ty
 
 # print - HTML
 stargazer(heckit1$lm, heckit2$lm, heckit3$lm, header=FALSE,label = "table:heckit", style = "ajps", title = "Two-Step Analysis of Rights Focus in U.S. News Coverage about Women Abroad", se = list(heckit1.se, heckit2.se, heckit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Rights Focus", covariate.labels=c("Intercept", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Physical Integrity Rights"), star.cutoffs = c(0.05, 0.01, 0.001))
+
+apent41 <- heckit1$lm
+apent42 <- heckit2$lm
+apent43 <- heckit3$lm
+apent44 <- heckit1.se
+apent45 <- heckit2.se
+apent46 <- heckit3.se
+
 ```
 
 \pagebreak
@@ -543,7 +642,11 @@ stargazer(heckit1$lm, heckit2$lm, heckit3$lm, header=FALSE,label = "table:heckit
 ## Figure 2: Marginal Effects of Women's Rights Index on Reported (Count)
 
 ```{r fig2, echo=FALSE}
+apen2 <- nb1
+
 interaction_plot_binary(nb1, effect="women_composite", moderator="muslim.maj", interaction="women_composite:muslim.maj", factor_labels=c("Not Muslim Majority","Muslim Majority"), xlabel="", ylabel="Marginal Effect of Women's Rights on Coverage", title="")
+
+saveRDS(apen2, './writeup_files/apen2.RDS')
 ```
 
 \pagebreak
@@ -552,6 +655,8 @@ interaction_plot_binary(nb1, effect="women_composite", moderator="muslim.maj", i
 
 ```{r fig3, echo=FALSE}
 # Corpus Summary of Topic Proportions
+
+apen3 <- model
 
 plot.STM(model,type="summary",custom.labels=labels,main="")
 ```
@@ -565,9 +670,41 @@ plot.STM(model,type="summary",custom.labels=labels,main="")
 prep <- estimateEffect(1:15 ~ REGION+s(YEAR),model,meta=meta,uncertainty="Global",documents=docs)
 regions = c("Asia","EECA","MENA","Africa","West","LA")
 
+apen41 <- prep
+apen42 <- regions
+
 par(mfrow=c(2,2))
 # print prevalence graphs for 4 topics
 for (i in c(3,7,9,14)){
   plot.estimateEffect(prep,"REGION",method="pointestimate",topics=i,printlegend=TRUE,labeltype="custom",custom.labels=regions,main=labels[i],ci.level=.95,nsims=100)
 }
+
+```
+
+```{r saveApen, include=FALSE}
+
+saveRDS(apent11, './writeup_files/apent11.RDS')
+saveRDS(apent12, './writeup_files/apent12.RDS')
+saveRDS(apent13, './writeup_files/apent13.RDS')
+saveRDS(apent14, './writeup_files/apent14.RDS')
+saveRDS(apent15, './writeup_files/apent15.RDS')
+saveRDS(apent16, './writeup_files/apent16.RDS')
+saveRDS(apent21, './writeup_files/apent21.RDS')
+saveRDS(apent22, './writeup_files/apent22.RDS')
+saveRDS(apent23, './writeup_files/apent23.RDS')
+saveRDS(apent24, './writeup_files/apent24.RDS')
+saveRDS(apent25, './writeup_files/apent25.RDS')
+saveRDS(apent26, './writeup_files/apent26.RDS')
+saveRDS(apent3, './writeup_files/apent3.RDS')
+saveRDS(apent41, './writeup_files/apent41.RDS')
+saveRDS(apent42, './writeup_files/apent42.RDS')
+saveRDS(apent43, './writeup_files/apent43.RDS')
+saveRDS(apent44, './writeup_files/apent44.RDS')
+saveRDS(apent45, './writeup_files/apent45.RDS')
+saveRDS(apent46, './writeup_files/apent46.RDS')
+saveRDS(apen2, './writeup_files/apen2.RDS')
+saveRDS(apen3, './writeup_files/apen3.RDS')
+saveRDS(apen41, './writeup_files/apen41.RDS')
+saveRDS(apen42, './writeup_files/apen42.RDS')
+
 ```
