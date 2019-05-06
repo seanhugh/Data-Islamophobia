@@ -831,20 +831,42 @@ return(plot1)
 ```{r fig2m, echo = FALSE}
 
 fig2m <- sean_graph(list(nb1, wnb1), labels = c("All Data", "No Warzones"), title = "Marginal effects plot", xlabel = "Muslim Majority", ylabel = "Marginal Effect of Women's Rights on Coverage")
+
+fig2m
 ```
 
 ```{r textData, echo = FALSE}
 
+# Create a list of words to filter out
+
+wordlist <- c("terroris", "bomb", "attack")
+
 # get the correct article counts from the meta section
 
 altered_text_data <- meta %>% 
-  dplyr::select(COUNTRY_FINAL, YEAR) %>% 
+  
+  dplyr::select(COUNTRY_FINAL, SUBJECT, YEAR, TEXT) %>% 
+  
   mutate(ccode = countrycode((COUNTRY_FINAL),  "country.name",  "cown")) %>% 
-  group_by(YEAR, ccode) %>% 
+  
+  # Filter out articles based on subject line
+  
+  mutate(subject = as.character(SUBJECT)) %>% 
+  
+  mutate(text = as.character(TEXT)) %>% 
+  
+  filter(!(grepl(paste(wordlist,collapse="|"), tolower(subject)))) %>% 
+  
+  # Count up the new amount of articles
+  mutate(ccodeyear = paste0(ccode, YEAR)) %>% 
+  
+  dplyr::select(ccodeyear) %>% 
+  
+  group_by(ccodeyear) %>% 
+
   count() %>% 
-  arrange(ccode, YEAR) %>% 
   mutate(n.docs = freq) %>% 
-  mutate(ccodeyear = paste0(ccode, YEAR))
+  dplyr::select(n.docs, ccodeyear)
 
 # Lag the freq by one year like they do in the main dataset
 altered_text_data$n.docs <- lag(altered_text_data$n.docs, 1)
@@ -854,8 +876,8 @@ altered_text_data$n.docs <- lag(altered_text_data$n.docs, 1)
 merged_rt_data <- right_join(altered_text_data, rt_altered, by="ccodeyear") %>% 
   
   mutate(n.docs.final = case_when(
-    is.na(n.docs.x) ~ n.docs.y,
-    TRUE ~ n.docs.x
+    is.na(n.docs.x) ~ 0,
+    TRUE ~ as.numeric(n.docs.x)
   ))
 
 ```
@@ -868,31 +890,31 @@ text_nb1.se <- coeftest(text_nb1, vcov=function(x) vcovHC(x, cluster="group", ty
 
 # rerun models using the new textData
 
-fig3m <- sean_graph(list(nb1, wnb1, text_nb1), labels = c("All Data", "No Warzones"), title = "Marginal effects plot", xlabel = "Muslim Majority", ylabel = "Marginal Effect of Women's Rights on Coverage")
+fig3m <- sean_graph(list(nb1, wnb1, text_nb1), labels = c("All Data", "No Warzones", "No Terrorism"), title = "Marginal effects plot", xlabel = "Muslim Majority", ylabel = "Marginal Effect of Women's Rights on Coverage")
 
 fig3m
-```
-
-```{r}
-
-# GET ALL ARTICLE STHAT DO NOT INCLUDE A LISTED TERM IN SUBJET
-meta %>% 
-  dplyr::select(SUBJECT) %>% 
-  mutate(subject = as.character(SUBJECT)) %>% 
-  filter(!grepl(c("terroris", "bomb"), tolower(subject)))
-
-meta %>% 
-  dplyr::select(TEXT) %>% 
-  mutate(text = as.character(TEXT)) %>% 
-  filter(grepl(c("terroris", "bomb"), tolower(text)))
-
-# We expect frequency of women related terrorist events to be associated with repressed womens rights, possibly biasing these results
-
+  
 
 
 ```
 
+```{r bothData, echo=FALSE}
 
+# Create one that removes warzones and text data
+no_warzones_terrorism <- merged_rt_data %>% 
+    
+  filter(!(ccode %in% country_codes))
+
+# MUSLIM MAJORITY
+bothModels_nb1 <- glm.nb(n.docs.final ~ count + women_composite*muslim.maj + polity2 + domestic9 + log(pop.wdi) +log(gdp.pc.un),data = no_warzones_terrorism)
+bothModels_nb1.se <- coeftest(text_nb1, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+
+fig4m <- sean_graph(list(nb1, wnb1, text_nb1, bothModels_nb1), labels = c("All Data", "No Warzones", "No Terrorism", "No war, No Terror"), title = "Marginal effects plot", xlabel = "Muslim Majority", ylabel = "Marginal Effect of Women's Rights on Coverage")
+
+fig4m
+
+
+```
 
 
 ```{r saveApen, include=FALSE}
