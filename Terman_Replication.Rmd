@@ -166,7 +166,11 @@ rt_altered <- rt %>%
   
   # Set the year to be a number
   
-  mutate(year = as.numeric(as.character(year)))
+  mutate(year = as.numeric(as.character(year))) %>% 
+  
+  # Create a unique key for each row
+  
+  mutate(ccodeyear = paste0(ccode, year))
               
 ```
 
@@ -657,15 +661,15 @@ rt_altered_war <- rt_altered %>%
 
 # MUSLIM MAJORITY
 wlogit1 <- glm(n.binary ~ count + women_composite*muslim.maj + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt_altered_war, family = binomial(link="probit"), control = list(maxit = 50))
-wlogit1.se <- coeftest(logit1, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+wlogit1.se <- coeftest(wlogit1, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
 
 # MENA
 wlogit2 <- glm(n.binary ~ count + women_composite*mena + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt_altered_war, family = binomial(link="probit"), control = list(maxit = 50))
-wlogit2.se <- coeftest(logit2, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+wlogit2.se <- coeftest(wlogit2, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
 
 # PERCENT MUSLIM
 wlogit3 <- glm(n.binary ~ count + women_composite*muslim + polity2 + domestic9 + log(pop.wdi) + log(gdp.pc.un), data = rt_altered_war, family = binomial(link="probit"), control = list(maxit = 50))
-wlogit3.se <- coeftest(logit3, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+wlogit3.se <- coeftest(wlogit3, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
 
 ```
 
@@ -683,15 +687,15 @@ stargazer(wlogit1, wlogit2, wlogit3, header=FALSE, label = "table:probit", style
 
 # MUSLIM MAJORITY
 wnb1 <- glm.nb(n.docs ~ count + women_composite*muslim.maj + polity2 + domestic9 + log(pop.wdi) +log(gdp.pc.un),data = rt_altered_war)
-wnb1.se <- coeftest(nb1, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+wnb1.se <- coeftest(wnb1, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
 
 # MENA
 wnb2 <- glm.nb(n.docs ~ count + women_composite*mena + polity2 + domestic9 + log(pop.wdi) +log(gdp.pc.un),data = rt_altered_war)
-wnb2.se <- coeftest(nb2, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+wnb2.se <- coeftest(wnb2, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
 
 # MUSLIM PERCENTAGE
 wnb3 <- glm.nb(n.docs ~ count + women_composite*muslim + polity2 + domestic9 + log(pop.wdi) +log(gdp.pc.un),data = rt_altered_war)
-wnb3.se <- coeftest(nb3, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+wnb3.se <- coeftest(wnb3, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
 
 # PRINT
 stargazer(wnb1, wnb2, wnb3, label = "table:negbin", header=FALSE, title = "Negative Binomial Analysis of U.S. News Coverage about Women Abroad", style = "ajps", se = list(wnb1.se, wnb2.se, wnb3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Reported (Count)", covariate.labels=c("Country Reports", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, 0.001))
@@ -779,22 +783,26 @@ interaction_plot_binary <- function(model, effect, moderator, interaction, varco
 sean_graph <- function(models, labels, effect, moderator, interaction, varcov="default", conf=.95, title="Marginal effects plot", xlabel="Value of moderator", ylabel="Estimated marginal coefficient", factor_labels=c(0,1)){
 
 bar_size = .03
-offset = .05
+displace_size = .05
 
 myData <- data.frame(x_2 = c(), delta_1 = c(), upper_bound = c(), lower_bound = c(), model = c()) 
 
-for(i in c(1,2)){
+for(i in 1:length(models)){
   
   temp_plot <- interaction_plot_binary(models[[i]], effect="women_composite", moderator="muslim.maj", interaction="women_composite:muslim.maj", factor_labels=c("Not Muslim Majority","Muslim Majority"), xlabel="", ylabel="Marginal Effect of Women's Rights on Coverage", title="")
   
   temp_plot_alt <- temp_plot %>% 
   mutate(model = labels[i]) %>% 
-  mutate(offset = i*displace_size)
+  mutate(offset = (i - 1)*displace_size)
   
   myData <- rbind(myData, temp_plot_alt)
 
 }
  
+# Calcluate where the breaks should go
+
+spot1 <- displace_size/length(models)
+
 # Plot all Data together
 
 plot1 <- ggplot(myData) +
@@ -808,7 +816,11 @@ plot1 <- ggplot(myData) +
   
   geom_segment(aes(x = x_2 - bar_size + offset, y = upper_bound, xend = x_2 + bar_size + offset, yend = upper_bound, color = model)) +
   
-  labs(title = title, x = xlabel, y = ylabel)
+  labs(title = title, y = ylabel) + 
+  
+  scale_x_continuous(labels = c("Non-Muslim Country", "Muslim Country"), breaks=c(spot1, spot1 + 1)) +
+  
+  theme(axis.title.x=element_blank())
 
 return(plot1)
 
@@ -818,9 +830,69 @@ return(plot1)
 
 ```{r fig2m, echo = FALSE}
 
-sean_graph(list(nb1, wnb1), labels = c("No Warzones", "All Data"), title = "Marginal effects plot", xlabel = "Muslim Majority", ylabel = "Marginal Effect of Women's Rights on Coverage")
+fig2m <- sean_graph(list(nb1, wnb1), labels = c("All Data", "No Warzones"), title = "Marginal effects plot", xlabel = "Muslim Majority", ylabel = "Marginal Effect of Women's Rights on Coverage")
+```
+
+```{r textData, echo = FALSE}
+
+# get the correct article counts from the meta section
+
+altered_text_data <- meta %>% 
+  dplyr::select(COUNTRY_FINAL, YEAR) %>% 
+  mutate(ccode = countrycode((COUNTRY_FINAL),  "country.name",  "cown")) %>% 
+  group_by(YEAR, ccode) %>% 
+  count() %>% 
+  arrange(ccode, YEAR) %>% 
+  mutate(n.docs = freq) %>% 
+  mutate(ccodeyear = paste0(ccode, YEAR))
+
+# Lag the freq by one year like they do in the main dataset
+altered_text_data$n.docs <- lag(altered_text_data$n.docs, 1)
+
+# Merge the columns together by ccode and year
+
+merged_rt_data <- right_join(altered_text_data, rt_altered, by="ccodeyear") %>% 
+  
+  mutate(n.docs.final = case_when(
+    is.na(n.docs.x) ~ n.docs.y,
+    TRUE ~ n.docs.x
+  ))
 
 ```
+
+```{r textData, echo = FALSE}
+
+# MUSLIM MAJORITY
+text_nb1 <- glm.nb(n.docs.final ~ count + women_composite*muslim.maj + polity2 + domestic9 + log(pop.wdi) +log(gdp.pc.un),data = merged_rt_data)
+text_nb1.se <- coeftest(text_nb1, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
+
+# rerun models using the new textData
+
+fig3m <- sean_graph(list(nb1, wnb1, text_nb1), labels = c("All Data", "No Warzones"), title = "Marginal effects plot", xlabel = "Muslim Majority", ylabel = "Marginal Effect of Women's Rights on Coverage")
+
+fig3m
+```
+
+```{r}
+
+# GET ALL ARTICLE STHAT DO NOT INCLUDE A LISTED TERM IN SUBJET
+meta %>% 
+  dplyr::select(SUBJECT) %>% 
+  mutate(subject = as.character(SUBJECT)) %>% 
+  filter(!grepl(c("terroris", "bomb"), tolower(subject)))
+
+meta %>% 
+  dplyr::select(TEXT) %>% 
+  mutate(text = as.character(TEXT)) %>% 
+  filter(grepl(c("terroris", "bomb"), tolower(text)))
+
+# We expect frequency of women related terrorist events to be associated with repressed womens rights, possibly biasing these results
+
+
+
+```
+
+
 
 
 ```{r saveApen, include=FALSE}
@@ -851,5 +923,25 @@ saveRDS(apen41, './writeup_files/apen41.RDS')
 saveRDS(apen42, './writeup_files/apen42.RDS')
 
 # Main Paper File
+
+# Table 1: Probit Analysis
+saveRDS(wlogit1, './writeup_files/wlogit11.RDS')
+saveRDS(wlogit2, './writeup_files/wlogit12.RDS')
+saveRDS(wlogit3, './writeup_files/wlogit13.RDS')
+saveRDS(wlogit1.se, './writeup_files/wlogit14.RDS')
+saveRDS(wlogit2.se, './writeup_files/wlogit15.RDS')
+saveRDS(wlogit3.se, './writeup_files/wlogit16.RDS')
+
+# Table 2: Negative Binomial Analysis
+saveRDS(wnb1, './writeup_files/wnb11.RDS')
+saveRDS(wnb2, './writeup_files/wnb12.RDS')
+saveRDS(wnb3, './writeup_files/wnb13.RDS')
+saveRDS(wnb1.se, './writeup_files/wnb14.RDS')
+saveRDS(wnb2.se, './writeup_files/wnb15.RDS')
+saveRDS(wnb3.se, './writeup_files/wnb16.RDS')
+
+# Figure 2: Marginal Effects Plot
+
+saveRDS(fig2m, './writeup_files/fig2m.RDS')
 
 ```

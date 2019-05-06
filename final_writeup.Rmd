@@ -86,9 +86,10 @@ OTHER VARIABLES
 
 #### Extension Data 
 
-I create a new dataset which discards articles regarding countries that the US is currently in active military conflict with: Afghanistan, Iraq, Syria, Yemen, Somalia, Libya, and Niger (CITATION).
+I create a new dataset which discards articles regarding countries that the US is currently in active military conflict with: Afghanistan, Iraq, Syria, Yemen, Somalia, Libya, and Niger (CITATION). We will refer to the set of all countries not including these countries as the NAW countries.
 
 ELABORATE ON WHY WE CHOSE THESE
+GIVE DETAILS ON HOW MANY DATA POINTS REMAIN AFTER DOING THIS
 
 # Results
 
@@ -110,9 +111,64 @@ She also runs two models on the data to analyze the significance of several vari
 
 #### Method 1: Removing Countries involved in U.S. military conflicts
 
-I created a new dataset that removed countries at war from the U.S. from Terman's initial dataset. I then repeated Terman's initial models on the dataset. 
+I created a new dataset that removed countries at war from the U.S. from Terman's initial dataset (NAW countries - Not At War). I then repeated Terman's initial models on the dataset. We first can see the probit and negative binomial models (Tables 1 and 2).
+
+\newpage
+
+## Table 1: Probit Analysis of U.S. News Coverage of Women Abroad in NAW Countries
+
+```{r tb1, echo=FALSE, results='asis'}
+
+# Table 1: Probit Analysis
+wlogit1 <- readRDS('./writeup_files/wlogit11.RDS')
+wlogit2 <- readRDS('./writeup_files/wlogit12.RDS')
+wlogit3 <- readRDS('./writeup_files/wlogit13.RDS')
+wlogit1.se <- readRDS('./writeup_files/wlogit14.RDS')
+wlogit2.se <- readRDS('./writeup_files/wlogit15.RDS')
+wlogit3.se <- readRDS('./writeup_files/wlogit16.RDS')
+
+# Print Table 1
+stargazer(wlogit1, wlogit2, wlogit3, header=FALSE, label = "table:probit", style = "ajps", title = "Probit Analysis of U.S. News Coverage about Women Abroad", se = list(wlogit1.se, wlogit2.se, wlogit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Repocountry.yeared (Binary)", covariate.labels=c("Country Repocountry.years", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, .001))
+
+```
+
+\newpage
+
+## Table 2: Negative Binomial Analysis of U.S. News Coverage of Women Abroad in NAW Countries
+
+```{r tb2, echo=FALSE, results='asis'}
+
+# Table 2: Negative Binomial Analysis
+wnb1 <- readRDS('./writeup_files/wnb11.RDS')
+wnb2 <- readRDS('./writeup_files/wnb12.RDS')
+wnb3 <- readRDS('./writeup_files/wnb13.RDS')
+wnb1.se <- readRDS('./writeup_files/wnb14.RDS')
+wnb2.se <- readRDS('./writeup_files/wnb15.RDS')
+wnb3.se <- readRDS('./writeup_files/wnb16.RDS')
+
+# Print Table 2
+stargazer(wnb1, wnb2, wnb3, label = "table:negbin", header=FALSE, title = "Negative Binomial Analysis of U.S. News Coverage about Women Abroad", style = "ajps", se = list(wnb1.se, wnb2.se, wnb3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Reported (Count)", covariate.labels=c("Country Reports", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, 0.001))
+
+```
+
+\newpage
+
+We can see that in both of these models, the expected positive correlation between Muslim Country and article count, and the expected negative correlation between Muslim Country x Women's Rights exist and are statistically significant. We can judge the significance of any changes in magnitude by looking at the marginal effects of women's rights coverage using a binary interaction plot (Figure 2).
+
+## Figure 2: Marginal Effects of Women's Rights Index on Reported (Count). All Countries vs. NAW Countries
+
+```{r fig2, echo=FALSE}
+
+readRDS('./writeup_files/fig2m.RDS')
+
+```
+
+From the marginal effects plot we can see how by removing NAW countries, the magnitude of the effects described by Terman was reduced. More importantly, the confidence intervals of the Non-Muslim Countries now passes below 0, making the conclusion that Women's Rights increase the probability of receiving an article less significant.
+
 
 #### Method 2: Remove Articles involving terrorist activity
+
+TBD whether this is possible or not: might require some heavy lifting
 
 # Discussion
 
