@@ -830,9 +830,9 @@ return(plot1)
 
 ```{r fig2m, echo = FALSE}
 
-fig2m <- sean_graph(list(nb1, wnb1), labels = c("All Data", "No Warzones"), title = "Marginal effects plot", xlabel = "Muslim Majority", ylabel = "Marginal Effect of Women's Rights on Coverage")
+fig2m <- sean_graph(list(nb1), labels = c("All Data", "No Warzones"), title = "Marginal effects plot", xlabel = "Muslim Majority", ylabel = "Marginal Effect of Women's Rights on Coverage")
 
-fig2m
+fig3m <- sean_graph(list(nb1, wnb1), labels = c("All Data", "No Warzones"), title = "Marginal effects plot", xlabel = "Muslim Majority", ylabel = "Marginal Effect of Women's Rights on Coverage")
 ```
 
 ```{r textData, echo = FALSE}
@@ -880,6 +880,8 @@ merged_rt_data <- right_join(altered_text_data, rt_altered, by="ccodeyear") %>%
     TRUE ~ as.numeric(n.docs.x)
   ))
 
+
+
 ```
 
 ```{r textData, echo = FALSE}
@@ -890,11 +892,7 @@ text_nb1.se <- coeftest(text_nb1, vcov=function(x) vcovHC(x, cluster="group", ty
 
 # rerun models using the new textData
 
-fig3m <- sean_graph(list(nb1, wnb1, text_nb1), labels = c("All Data", "No Warzones", "No Terrorism"), title = "Marginal effects plot", xlabel = "Muslim Majority", ylabel = "Marginal Effect of Women's Rights on Coverage")
-
-fig3m
-  
-
+fig4m <- sean_graph(list(nb1, wnb1, text_nb1), labels = c("All Data", "No Warzones", "No Terrorism"), title = "Marginal effects plot", xlabel = "Muslim Majority", ylabel = "Marginal Effect of Women's Rights on Coverage")
 
 ```
 
@@ -909,10 +907,23 @@ no_warzones_terrorism <- merged_rt_data %>%
 bothModels_nb1 <- glm.nb(n.docs.final ~ count + women_composite*muslim.maj + polity2 + domestic9 + log(pop.wdi) +log(gdp.pc.un),data = no_warzones_terrorism)
 bothModels_nb1.se <- coeftest(text_nb1, vcov=function(x) vcovHC(x, cluster="group", type="HC1"))[,2]
 
-fig4m <- sean_graph(list(nb1, wnb1, text_nb1, bothModels_nb1), labels = c("All Data", "No Warzones", "No Terrorism", "No war, No Terror"), title = "Marginal effects plot", xlabel = "Muslim Majority", ylabel = "Marginal Effect of Women's Rights on Coverage")
+fig5m <- sean_graph(list(nb1, wnb1, text_nb1, bothModels_nb1), labels = c("All Data", "No Warzones", "No Terrorism", "No war, No Terror"), title = "Marginal effects plot", xlabel = "Muslim Majority", ylabel = "Marginal Effect of Women's Rights on Coverage")
 
-fig4m
 
+```
+
+
+```{r whyTerrorism, echo=FASLE}
+
+whyTerrorism <- rt_altered %>% 
+  mutate(countryType = (ccode %in% country_codes)) %>% 
+  filter(!is.na(women_composite)) %>% 
+  filter(muslim > .5) %>% 
+  group_by(year, countryType) %>% 
+  dplyr::summarize(meanWomen = mean(women_composite)) %>% 
+  ggplot(aes(x = year, y = meanWomen)) +
+  geom_point(aes(color = countryType)) + 
+  geom_line(aes(color = countryType))
 
 ```
 
@@ -965,5 +976,22 @@ saveRDS(wnb3.se, './writeup_files/wnb16.RDS')
 # Figure 2: Marginal Effects Plot
 
 saveRDS(fig2m, './writeup_files/fig2m.RDS')
+
+# Figure 3: No War Marginal Effects Plot
+
+saveRDS(fig2m, './writeup_files/fig3m.RDS')
+
+# Figure 4: No Terms Marginal Effects Plot
+
+saveRDS(fig4m, './writeup_files/fig4m.RDS')
+
+# Figure 5: Combined Marginal Effects Plot
+
+saveRDS(fig5m, './writeup_files/fig5m.RDS')
+
+# Why Removing Terrorism Plot
+
+saveRDS(whyTerrorism, './writeup_files/whyTerrorism.RDS')
+
 
 ```
