@@ -1,7 +1,7 @@
 ---
-title: Analysis of "Islamophobia and Media Portrayals of Muslim Women"
+title: Analysis of the Impact of War and Terrorism on "Islamophobia and Media Portrayals of Muslim Women"
 author: "Sean Hughes"
-date: "April 13, 2019"
+date: "May 10, 2019"
 output:
  pdf_document:
   md_extension: +raw_tex
@@ -45,18 +45,20 @@ load("dataverse_files/stm.RData")
 
 # Abstract
 
-Does news content by United States news organizations affirm western cultural and political superiority over muslim countries? In her paper, *An Analysis of Islamophobia and Media Portrayals of Muslim Women: A Computational Text Analysis of US News Coverage* [@terman], Rochelle Terman analyzes this claim. She determines that US news coverage of women abroad is driven by confirmation bias, whereby journalists are more likely to report on women living in Muslim and Middle Eastern countries if their rights are violated, but will report on women in other societies when their rights are respected. She uses 35 years of New York Times and Washington Post data to analyze this claim, and determines that U.S. Media spreads the perception that Muslims are distinctly sexist. I hypothesise that this result could be due in part to unmeasured confounding by terrorism. To test this hypothesis, I control for war & terrorism in two seperate ways: I remove countries that the United States is involved in active military confilct with, and I remove articles whos content is related to terrorism. By controlling for war & terrorism, the magnitude of Terman's results is reduced by 33%.
+Does news content by United States news organizations assert western cultural and political superiority over muslim countries? In her paper, *An Analysis of Islamophobia and Media Portrayals of Muslim Women: A Computational Text Analysis of US News Coverage* [@terman], Rochelle Terman analyzes this claim. She determines that US news coverage of women abroad is driven by confirmation bias, whereby journalists are more likely to report on women living in Muslim and Middle Eastern countries if their rights are violated, but will report on women in other societies when their rights are respected. She uses 35 years of New York Times and Washington Post data to analyze this claim, and determines that U.S. Media spreads the perception that Muslims are distinctly sexist. I hypothesise that this result could be due in part to unmeasured confounding by terrorism. To test this hypothesis, I control for war & terrorism in two seperate ways: I remove countries that the United States is involved in active military confilct with, and I remove articles whos content is related to terrorism. I find that by removing countries at war with the United States, the magnitude of Terman's results is reduced by 33%.
 
 # Introduction
 
 #### Cultural Threat
-Why has public hostility towards muslims been on the rise in the United States? The link between Muslims and terrorism has been considered a leading cause of this hostility; however, recent findings suggest that the perception of Muslims as a *cultural* threat may be more significant than their association with terrorism. While studies have examined origins of this perception in media portrayals, few studies have examined how this perception as a cultural threat originates in media portrayals. Terman's study draws on the theory of gendered orientalism to identify a central media facet that perpetuates the stereotype of Muslims as a cultural threat, namely representations of women and gender inequality. 
+Why has public hostility towards muslims been on the rise in the United States? The link between Muslims and terrorism has been considered a leading cause of this hostility. However, research suggest that the perception of Muslims as a *cultural* threat may be more significant than their association with terrorism. A cultural threat signifies that people, in this study refering to people in the U.S., would view them as being culturally inferior or incompatible. While studies have examined origins of this perception in media portrayals, few studies have examined how this perception as a cultural threat originates in media portrayals. 
+
+Orientalism refers to the representation of Asia with a colonialist attitude. Gendered Oritentalism refers to the study of orientalism with a specific focus on women. It draws on theories that state that one mechanism of enforcing a colonial attitude is to paint the treatment of women in another society as inferior. Since 9/11, this has become an increasingly popular area of research as people have suspected this form of orientalism to be increasing along with the War on Terror. Terman's study examines the theory of gendered orientalism and its application in the Middle East. She identifies the media's role in perpetuating the stereotype of Muslims as a *cultural* threat, specifically focusing on representations of women and gender inequality in the Middle East. 
 
 #### Terman's Hypothesis
-Using 35 years of New York Times and Washington Post data, Terman analyzes the origins of *cultural* threat regarding the representations of women and gender inequality and has two hypothesis: 
+Using 35 years of New York Times and Washington Post news archives, Terman analyzes the origins of *cultural* threat regarding the representations of women and gender inequality and has two hypothesis: 
 \newline
 
-* Quantity Hypothesis: The binary sepertion of Muslim Women from "freer" western women (i.e. pushing this narritive). So Muslim women from countries with poor rights records make news, while opposite for non-muslim.
+* Quantity Hypothesis: The sepertion of Muslim women from "freer" western women (i.e. pushing this narritive). Muslim women from countries with poor women's rights records are reported upon more frequently, while the opposite holds for women from non-muslim countries.
 
 ## Figure 1: Quantity Hypothesis (Figure drawn directly from Terman's paper)
 
@@ -64,13 +66,13 @@ Using 35 years of New York Times and Washington Post data, Terman analyzes the o
 
 * Quality Hypothesis: Quality / Framing Hypothesis: U.S. media coverage of women in Muslim and Middle Eastern countries is obsessed about one issue in particular: women’s rights and gender (in)equality.
 
-For the sake of this paper, we focus on analyzing Terman's findings regarding the Quality Hypothesis (Which will now be referred to as the "hypothesis").
+For the sake of this paper, we focus on analyzing Terman's findings regarding the quantity hypothesis (Which will now be referred to as the "hypothesis").
 
 #### 9/11 and Terrorism
-Generally speaking, Americans view Muslims much less favorably than other religious and racial minorities (Pew Research Center 2014). The disfavor is most commonly viewed as being due to the connection between Muslims and terrorism, caused by the attacks on 9/11 and the subsequent War on Terror, held by the American public. Orientalism refers to the representation of asia with a colonialist attitude. Gendered Oritentalism refers to the study of orientalism with a specific focus on women. Since 9/11, there has been more research in this are as people percieve a revitaliation of orientalism to be at work in the War on Terror. Terman's work falls under the category similiar to that of gendered orientalism as it studies how western news outlets are portraying women in the Middle East.
+Generally speaking, Americans view Muslims much less favorably than other religious and racial minorities (Pew Research Center 2014). The disfavor is most commonly viewed as being due to the connection between Muslims and terrorism, largely attributed to the attacks on 9/11 and the subsequent War on Terror. Terman's work studies whether the news we read may also be a factor in this disfavor. 
 
 #### Anlaysis of Terman's Hypothesis Accounting for War and 9/11
-9/11 and terrorism are clearly driving forces in research into gendered orientalism. I plan to analyze the role of war and terrorism in Terman's Quantity hypothesis. I have the following two hypotheses: \newline
+9/11 and terrorism are clearly driving forces in the disfavor of people from the U.S. towards Muslim countries, and also relavent to Terman's research into gendered orientalism. I plan to analyze the role of war and terrorism in Terman's Quantity hypothesis. I have the following two hypotheses: \newline
 1. **War Hypothesis**: I hypothesize that Terman's results are partly driven by coverage of war zones, and thus by removing countries at war with the US it will lessen the magnitude of her results.\newline
 2. **Terrorism Related Content**: I hypothesize that Terman's results are partly driven by coverage of terrorist acts, and thus by removing articles related to terrorism it will lessen the magnitude of her results.
 
@@ -78,20 +80,20 @@ Generally speaking, Americans view Muslims much less favorably than other religi
 
 #### Terman Study Data
 
-- **News Data**: News data is drawn from the LexisNexis databse. All articles containing the subject term “women” in non U.S. countries, published in the New York Times and Washington Post, 1980–2014 were downloaded. Each article is assigned to a single country with its most salient country term, if the term has a relevance score greater than or equal to 85% - articles with a lower relavence score, or with a country focused on the United States are discarded. A total of 4531 documents were included: 3726 from the New York Times and 805 from the Washington Post. \newline 
+- **News Data**: News data is drawn from the LexisNexis databse. All articles containing the subject term “women” in non U.S. countries, published in the New York Times and Washington Post, 1980–2014 were downloaded. Each article is assigned to a single country with its most salient country term, if the term has a relevance score greater than or equal to 85% - articles with a lower relavence score, or with a country country focus of the United States are discarded. A total of 4531 documents were included: 3726 from the New York Times and 805 from the Washington Post. \newline 
 
-- **Country data**: All current and historic UN states were included with the addition of Palestine and exclusion of the United States. The United States were excluded as they are outside of the focus of the study (focusing on US news coverage of foreign countries). Countries are labelled by their Correlates of War codes, labeled *ccode*. 
+- **Country data**: All current and historic UN states were included with the addition of Palestine and exclusion of the United States. The United States was excluded as the study focuses on US news coverage of foreign countries, so it is outside of the scope of the study. Countries are labelled by their Correlates of War codes, labeled *ccode*. 
 
-- **Country-Year data organization**: Data is aggregated into country-year datasets, in which there is a row for each year and country (total number of countries * total number of years = total number of rows). Each country-year data includes a count n.count and n.binary. n.count indicates the number of articles matching the criteria written about that country in that given year, and n.binary is a binary indicator variable which equals 0 if no articles were written in that given year and 1 if at least 1 article was written in that given year. N.docs often has a mix of NA values and 0 values. I changed them from NA to 0 for consistency.
+- **Country-Year data organization**: Data is aggregated into country-year datasets, in which there is a row for each year and country (total number of countries x total number of years = total number of rows). Each country-year data includes the variables *count*, *n.count* and *n.binary*. *n.count* indicates the number of articles matching the criteria written about that country in that given year, *n.binary* is a binary indicator variable which equals 0 if no articles were written in that given year and 1 if at least 1 article was written in that given year. *count* indicates the total number of articles written about that country in a given year (over all topics, not just related to women). *n.docs* and *count* both have a mix of NA values and 0 values. I change all NA values to 0 for consistency.
 
-- **Muslim Indicators**: Three seperate markers were used for indicating whether a country is or is not a muslim country. The first is the *Percentage Muslim* variable, indicating the percentage of muslims in a country (Drawn from Pew Research Center Data 2011). The second, *Muslim Majority*, is a binary indicator of 1 or 0, with value 1 when *Percentage Muslim* is greater than or equlal to 50%, and value 0 otherwise. The third is a set of regional groupings loosely based on Hafner-Burton and Ron’s (2013) six regional groupings (In which *MENA* indicates the Middle East and North Africa). When examining this data, it becomes clear that some countries experience fluctuations of muslim percentage of greater than 50% of the country's population. While this initially seems impossible, after further investigation all but one countries fluctuations can be attributed to declerations of independence. The one country where this does not hold is for Palestine. Terman assigns a new code to Palestine at the beginning of the paper, which causes it to share the same code as another country. While this skews the data under examination, the manner in which the models use the data causes this not to affect any of the outcomes. \newline 
+- **Muslim Indicators**: Three seperate markers were used to indicate whether a country is or is not a muslim country. The first is the *Percentage Muslim* variable, indicating the percentage of muslims in a country (Drawn from Pew Research Center Data 2011). The second, *Muslim Majority*, is a binary indicator of 1 or 0, with value 1 when *Percentage Muslim* is greater than or equlal to 50%, and value 0 otherwise. The third is a set of regional groupings loosely based on Hafner-Burton and Ron’s (2013) six regional groupings (In which *MENA* indicates the Middle East and North Africa). When examining this data, it becomes clear that some countries experience fluctuations of muslim percentage of greater than 50% of the country's population. While this initially seems impossible, after further investigation all but one countries fluctuations can be attributed to declerations of independence. The one country where this does not hold is for Palestine. Terman assigns a new code to Palestine at the beginning of the paper, which causes it to share the same code as another country. While this skews the data under examination, the manner in which the models use the data causes this not to affect any of the outcomes. \newline 
 
 - **Women's Rights**: Women's Rights score is given on a scale of 0 to 3, where 3 indicates the women's rights were best guaranteed by law and practice and 0 indicates that womens rights were not guaranteed in law nor practice. This score is drawn from the Cingranelli-Richards Rights Index (CIRI), which culls data from the U.S. State Department’s annual human rights country reports. The CIRI score gives three variables, Women’s Economic Rights, Women’s
 Political Rights, and Women’s Social Rights, of which the mean is taken to create the variable *Composite Women's Rights*.\newline
 
-- **Country Reports**: Country Reports data relates to the overall quantity of articles related to a country reported by the NYT in a given year.
+- **Country Reports**: Country Reports (refers to the *count* variable described above) data relates to the overall quantity of articles related to a country reported by the NYT in a given year. There are around 8 points in this dataset (< 1% of the data) where the # of articles about women (n.docs) is listed as being larger than the total number of documents (count), which indicates that the data is not perfect. I filtered these instances out of the data.
 
-- **Democracy**: Democracy variable from the Polity IV dataset’s Polity2 index is used to control for the level of autocrocy in a country (i.e. it could be difficult to report on women in highly autocratic or restrictive regimes). This varaible ranges from –10 (most autocratic) to +10 (most democratic).
+- **Democracy**: Democracy data is drawn from the Polity IV dataset’s Polity2 index. It is used to control for the level of autocracy in a country (i.e. it could be difficult to report on women in highly autocratic or restrictive regimes). This varaible ranges from –10 (most autocratic) to +10 (most democratic).
 
 - **Instability**:  Instability data is taken from the Banks CrossNational Time Series Data Archive composite index of political instability. It include indicators regarding riots, antigovernment protests, guerrilla attacks, general strikes, purges, government crises, and assassinations.
 
@@ -99,39 +101,38 @@ Political Rights, and Women’s Social Rights, of which the mean is taken to cre
 
 - **log(Population)**: Population data drawn from the United Nations and logged.
 
-- **Count**: The total number of articles written about each country in a year was aggregated into the count variable. This is used as input into the linear models to adjust the models for the fact that some countries generally have more written about them. There are around 8 points in this dataset (< 1% of the data) where the # of articles about women (n.docs) is listed as being larger than the total number of documents, which indicates that the data is not perfect. I filtered these instances out of the data.
-
 #### Extension Data 
 
-- **NAW Countries**: I create a new dataset which discards articles regarding countries that the US is currently in active military conflict with. I label these countries NAW (Not At War) countries. The countries that are excluded are Afghanistan, Iraq, Syria, Yemen, Somalia, Libya, and Niger (@vice). In the initial data set, there are 6448 country-year datapoints (where each datapoint represents a given country in a given year). In the new dataset there are 6209.
+- **NAW Countries**: I create a new dataset which discards articles regarding countries that the US is currently in active military conflict with. I label these countries NAW (Not At War) countries. The countries that are excluded are Afghanistan, Iraq, Syria, Yemen, Somalia, Libya, and Niger (@vice). In the complete data set, there are 6448 country-year datapoints (where each datapoint represents a given country in a given year). After exluding the countries at war with the U.S., there are 6209 country-year datapoints.
 
-- **Terrorism Related Terms**: I remove articles whos subject contain any of the following terms related to terrorism: terroris", "bomb", "attack". This list was created by reading through articles, selecting ones which covered terrorist content, and examining their shared subject tags. In the initial dataset there are 4531 articles. After removing articles related to terrorism there are 4253 articles.
+- **Terrorism Related Terms**: I remove articles with subjects containing any of the following terms related to terrorism: "terroris" (This matches words like "terrorist" and "terrorism"), "bomb", "attack". This list was created by reading through articles, selecting ones which covered terrorist content, and examining their shared subject tags. In the complete dataset there are 4531 articles. After removing articles with subjects matching the terrorism terms there are 4253 articles.
 
 #### Modeling Methods
 
 Terman uses 2 primary methods of modeling the data: probit model and negative binomial model:\newline
 
-- **Probit Model**: A probit regression is used because we are dealing with a binary variable (has an article written or does not have an article written).
+- **Probit Model**: A probit regression is used because we are dealing with a binary variable. The left hand variable in the probit model is *n.binary*, a binary indicator of whethere an article has or has not been written about a country in a given year.
 
-- **Negative Binomial Model**: A Negative binomial model is used to model the data with the total count of articles used as the left hand side variable. A negative binomial model is a standard model for use with count data. The total count of articles is right skewed, making negative binomial model an effective choice in this scenario.
+- **Negative Binomial Model**: A negative binomial model is used to model the data with the total count of articles used as the left hand side variable. A negative binomial model is a standard model for use with count data. The total count of articles is right skewed, making negative binomial model an effective choice in this scenario.
 
 # Results
 
 #### Summary of Terman Results
 
-  We can see Terman's results regarding the quantity hypothesis in Appendix Table 1, Appendix Table 2, and Appendix Figure 2. She shows that a lower women's rights index correlates with a higher probability of having an article written in a muslim country, while a higher women's rights index is correlated with a higher probability of having an article written in a non-muslim country (Appendix Figure 2).
+Terman runs two models on the data to analyze the significance of several variables on the probability of having an article written about a given country. Terman first uses a binary article count to account for the right skewing of data and uses a probit analysis of the data (Appendix Table 1). She then uses a full article count and uses a negative binomial analysis of the data (Appendix Table 2). In both cases, we see that all three measures of a country being a "Muslim Country" are significant.
 
-Terman also runs two models on the data to analyze the significance of several variables on the article count. Terman first uses a binary article count to account for the right skewing of data and uses a probit analysis of the data (Appendix Table 1). She then uses a full article count and uses a negative binomial analysis of the data (Appendix Table 2). In both cases, we see that all three measures of a country being a "Muslim Country" are significant, and also that a lowered Women's Rights Index results in a higher probabibilt of an article being written in all three cases.
+Both her analysis in Appendix Table 1 and Appendix Table 2 demonstrate that a lower women's rights index correlates with a higher probability of having an article written in a muslim country, while a higher women's rights index is correlated with a higher probability of having an article written in a non-muslim country (Appendix Figure 2). This supports her claims from the quantity hypothesis. Terman displays this result in Appendix Figure 2.
 
 #### Hypothesis 1: War Hypothesis
 
-Western media is more likely to report on countries that the US is engaged with in military conflict. We can see in figure 2 that soon after 1990 AW countries became increasingly more reported on than non-AW countries. We can see see in figure 3 that women's rights in the AW (at war) countries fell began to fall around 1990. This 1990 period also happens to be the same year as the Gulf War, and directly before Operation Desert Storm (1991).
+Western media is more likely to report on countries that the U.S. is engaged with in military conflict. We can see in figure 2 that soon after 1990 AW (At War) countries became increasingly more reported on than NAW (Not at War) countries. We can see see in figure 3 that women's rights in the AW countries fell began to fall around 1990. This 1990 period also happens to be the same year as the Gulf War, and directly before Operation Desert Storm (1991).
 
 ## Figure 2: Mean Women's Rights Composite Score in Muslim Countries (NAW vs. AW)
 
 ```{r figwhyT2, echo=FALSE}
 
-readRDS('./writeup_files/whyTerrorism2.RDS')
+readRDS('./writeup_files/whyTerrorism2.RDS') +
+  labs(caption="The mean number of articles on at war countries increases relative to not at war countries around 1990, \n the year of the Gulf War.")
 
 ```
 
@@ -139,11 +140,12 @@ readRDS('./writeup_files/whyTerrorism2.RDS')
 
 ```{r figwhyT1, echo=FALSE}
 
-readRDS('./writeup_files/whyTerrorism.RDS')
+readRDS('./writeup_files/whyTerrorism.RDS') +
+  labs(caption="Women's rights composite score in at war countries decreases around 1990, the year of the Gulf War.")
 
 ```
 
-Given the negative correlation between war and womens' rights, and the positive correlation between war and the number of articles published about women in a country, it is reasonable to assume that war could potentially affect Terman's results. In order to test this, I created a new dataset that removed countries at war from the U.S. from Terman's initial dataset (NAW countries - Not At War). I then repeated Terman's initial models on the dataset. We first can see the probit and negative binomial models (Tables 1 and 2) on the number of articles published about a given country, including external factors.
+Given the negative correlation between war and womens' rights, and the positive correlation between war and the number of articles published about women in a country, it is reasonable to assume that war could affect Terman's results. In order to test this, I created a new dataset that removed countries at war from the U.S. from Terman's initial dataset labeled NAW (Not at War) data. I then repeated Terman's initial models on the dataset. We first can see the probit and negative binomial models (Tables 1 and 2) on the number of articles published about a given country, including external factors.
 
 \newpage
 
@@ -160,7 +162,7 @@ wlogit2.se <- readRDS('./writeup_files/wlogit15.RDS')
 wlogit3.se <- readRDS('./writeup_files/wlogit16.RDS')
 
 # Print Table 1
-stargazer(wlogit1, wlogit2, wlogit3, header=FALSE, label = "table:probit", style = "ajps", title = "Probit Analysis of U.S. News Coverage about Women Abroad", se = list(wlogit1.se, wlogit2.se, wlogit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Repocountry.yeared (Binary)", covariate.labels=c("Country Repocountry.years", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, .001))
+stargazer(wlogit1, wlogit2, wlogit3, header=FALSE, label = "table:probit", style = "ajps",  se = list(wlogit1.se, wlogit2.se, wlogit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Repocountry.yeared (Binary)", covariate.labels=c("Country Repocountry.years", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, .001))
 
 ```
 
@@ -179,19 +181,20 @@ wnb2.se <- readRDS('./writeup_files/wnb15.RDS')
 wnb3.se <- readRDS('./writeup_files/wnb16.RDS')
 
 # Print Table 2
-stargazer(wnb1, wnb2, wnb3, label = "table:negbin", header=FALSE, title = "Negative Binomial Analysis of U.S. News Coverage about Women Abroad", style = "ajps", se = list(wnb1.se, wnb2.se, wnb3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Reported (Count)", covariate.labels=c("Country Reports", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, 0.001))
+stargazer(wnb1, wnb2, wnb3, label = "table:negbin", header=FALSE, style = "ajps", se = list(wnb1.se, wnb2.se, wnb3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Reported (Count)", covariate.labels=c("Country Reports", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, 0.001))
 
 ```
 
 \newpage
 
-We can see that in both of these models, the expected positive correlation between Muslim Country and article count, and the expected negative correlation between Muslim Country x Women's Rights exist and are statistically significant. We can visualize the magnitude of changes in the primary metric, womens' rights effect on coverage in a non-muslim vs. muslim country, by using a binary interaction plot (Figure 4). This figure plots the results of the negative binomial analysis of All Data (Directly from Terman's paper) vs. NAW countries, using *Muslim Majority* as the indicator of a muslim country. The results refer to the results of the first linear model from the negative binomial analyses (table 2 & appendix table 2).
+We can see that in both of these models, the expected positive correlation between Muslim Country and article count, and the expected negative correlation between Muslim Country x Women's Rights exist and are statistically significant. We can visualize the magnitude of changes in the primary metric, women's rights effect on coverage in a non-muslim vs. muslim country, by using a binary interaction plot (Figure 4). This figure plots the results of the negative binomial analysis of All Data (Directly from Terman's paper) vs. NAW countries, using *Muslim Majority* as the indicator of a muslim country. The results refer to the results of the first linear model from the negative binomial analyses (NAW data from table 2 & all data from appendix table 2).
 
 ## Figure 4: Marginal Effects of Women's Rights Index on Reported (Count). All Countries vs. NAW Countries
 
 ```{r fig3, echo=FALSE}
 
-readRDS('./writeup_files/fig3m.RDS')
+readRDS('./writeup_files/fig3m.RDS') +
+  labs(caption = "While confidence intervals still overlap, magnitude of the effect has decreased by 33% using NAW data.")
 
 ```
 
@@ -205,23 +208,25 @@ In the set of articles there are multiple articles containing content related to
 
 ![](./writeup_files/news_article.png)
 
-Articles like the one in figure 5 match Terman's criteria of being articles that fall under the category of women. However, it can be assumed that terrorist acts would generally be reported on regardless of location. Given that all of the top 6 countries most affected by terrorism are Muslim majority countries [@forbes], and that terrorism can be seen to impat womens' rights, it is reasonable to assume that terrorism could impact Terman's results. I remove articles related to terrorism from the dataset and analyze the data using Terman's methods of analysis. We can see the results in figure 5.
+Articles like the one in figure 5 match Terman's criteria of being articles that fall under the category of women. However, it can be assumed that terrorist acts would generally be reported on regardless of location. Given that all of the top 6 countries most affected by terrorism are Muslim majority countries [@forbes], and that the inclussion of terrorism can impact womens' rights, it is reasonable to assume that terrorism could impact Terman's results. I remove articles related to terrorism from the dataset and analyze the data using Terman's methods of analysis. We can see the results in figure 5.
 
-## Figure 5: Marginal Effects of Women's Rights Index on Reported (Count). All Articles vs. Excluding Terrorism
+## Figure 6: Marginal Effects of Women's Rights Index on Reported (Count). All Articles vs. NAW Data vs. Excluding Terrorism
 
 ```{r fig5, echo=FALSE}
 
-readRDS('./writeup_files/fig4m.RDS')
+readRDS('./writeup_files/fig4m.RDS') + 
+  labs(caption= "Removing terrorism related content shows a negligible effect compared to results using all data.")
 
 ```
 
-While there were some minor reductions in the magnitude of the impact of womens' rights on article countr in muslim countries, they were negligible compared to the results of removing AW countries. We can further analyze this data by creating a new dataset of NAW countries with terrorism removed (essentially combining hypothesis 1 and 2). We will call this new dataset "NAW Terrorism Removed". The results when modeling this dataset are below in figure 6.
+While there were some minor reductions in the magnitude of the impact of womens' rights on article count in muslim countries, they were negligible compared to the results of removing AW countries. We can further analyze this data by creating a new dataset of NAW countries with terrorism removed (essentially combining hypothesis 1 and 2). We will call this new dataset "NAW Terrorism Removed". The results when modeling this dataset are presented in figure 7.
 
-## Figure 6: Marginal Effects of Women's Rights Index on Reported (Count). All Data vs. NAW / Terrorism Removed Data
+## Figure 7: Marginal Effects of Women's Rights Index on Reported (Count). All Data vs. NAW / Terrorism Removed Data
 
 ```{r fig6, echo=FALSE}
 
-readRDS('./writeup_files/fig5m.RDS')
+readRDS('./writeup_files/fig5m.RDS') +
+  labs(caption="'NAW terrorism removed' demonstrates a 33% decrease in magnitude of effect compared to all data")
 
 ```
 
@@ -231,9 +236,9 @@ When including both hypothesis (NAW and no terror), we see a reduction in the ma
 
 My findings suggest that active wars could have an effect on Terman's results, demonstrated by the approximately 33% decrease in both of the effect of Womens' rights on coverage probability in muslim and non-muslim countries when removing AW countries from the dataset. While terrorism related content did not have as large of an effect, it is possible that my techiques for finding and removing content via subject tags were not robust, and that a more extensive process could have yielded better results. 
 
-Were I further investigate Terman's work I would be interested in finding indicators of war (in regard to the US) and terrorism that could be properly used to act as indicator variables in the models. For war, one possibility could be "# of deployed US soldiers in that specific country" (Assuming that it is a country with active military engagement not a base in a foreign ally's country).
+Were I to further investigate Terman's work, I would be interested in finding indicators of war (in regard to the US) and terrorism that could be properly used to act as indicator variables in the models. For war, one possible indicator could be "# of deployed US soldiers in that specific country" (Assuming that it is a country with active military engagement not a base in a foreign ally's country).
 
-Another interesting trend I found was the increase in articles written about women in countries at war with the US after those wars began. It would be interesting to further examine the data above on a before and after timeline to see how the results change when examining the data before and after the conflict initiated.
+Another interesting trend I found was the increase in articles written about women in countries at war with the US after those wars began. It would be interesting to further examine the data above on a before and after timeline to see how the results of this study change when examining the data before and after conflict (whether it be 9/11 as Terman suggests or the Gulf War and Operation Desert Storm as my data showed) initiated.
 
 # Acknowledgments
 
@@ -251,6 +256,8 @@ I would like to thank David Kane, Mark Hill, and my Gov 1006 class for providing
 
 # Appendix
 
+## Table 1: Probit Analysis of U.S. News Coverage of Women Abroad
+
 ```{r t1, echo=FALSE, results='asis'}
 
 l1 <- readRDS('./writeup_files/apent11.RDS')
@@ -264,6 +271,8 @@ stargazer(l1, l2, l3, header=FALSE, label = "table:probit", style = "ajps", titl
 
 
 ```
+\pagebreak
+## Table 2: Negative Binomial Analysis of U.S. News Coverage of Women Abroad
 
 ```{r t2, echo=FALSE, results='asis'}
 
@@ -278,6 +287,8 @@ apent2 <- stargazer(nb1, nb2, nb3, label = "table:negbin", header=FALSE, title =
 
 
 ```
+\pagebreak
+## Table 3: Summary of Topic Labels
 
 ```{r t3, echo=FALSE, results='asis'}
 
@@ -286,6 +297,8 @@ dat <- readRDS('./writeup_files/apent3.RDS')
 print(xtable(dat))
 
 ```
+\pagebreak
+## Table 4: Two-Step Analysis of Rights Focus in U.S. News Coverage of Women Abroad
 
 ```{r t4, echo=FALSE, results='asis'}
 
@@ -299,6 +312,8 @@ heckit3.se <- readRDS('./writeup_files/apent46.RDS')
 stargazer(heckit1, heckit2, heckit3, header=FALSE,label = "table:heckit", style = "ajps", title = "Two-Step Analysis of Rights Focus in U.S. News Coverage about Women Abroad", se = list(heckit1.se, heckit2.se, heckit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Rights Focus", covariate.labels=c("Intercept", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Physical Integrity Rights"), star.cutoffs = c(0.05, 0.01, 0.001))
 
 ```
+\pagebreak
+## Figure 2: Marginal Effects of Women's Rights Index on Reported (Count)
 
 ```{r f2, echo=FALSE}
 
@@ -307,6 +322,9 @@ nb1 <- readRDS('./writeup_files/apen2.RDS')
 interaction_plot_binary(nb1, effect="women_composite", moderator="muslim.maj", interaction="women_composite:muslim.maj", factor_labels=c("Not Muslim Majority","Muslim Majority"), xlabel="", ylabel="Marginal Effect of Women's Rights on Coverage", title="")
 
 ```
+\pagebreak
+
+## Figure 3: Summary of Topic Prevalence
 
 ```{r f3, echo=FALSE}
 
@@ -315,6 +333,9 @@ model <- readRDS('./writeup_files/apen3.RDS')
 plot.STM(model,type="summary",custom.labels=labels,main="")
 
 ```
+\pagebreak
+
+## Figure 4: Expected Document Proportions for Four Topics
 
 ```{r f4, echo=FALSE}
 
