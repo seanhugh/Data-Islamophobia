@@ -1060,3 +1060,29 @@ saveRDS(whyTerrorism, './writeup_files/whyTerrorism.RDS')
 saveRDS(whyTerrorism2, './writeup_files/whyTerrorism2.RDS')
 
 ```
+
+
+```{r}
+
+
+wordlist <- c("terroris", "bomb", "attack")
+
+# get the correct article counts from the meta section
+
+meta %>% 
+  
+  dplyr::select(COUNTRY_FINAL, SUBJECT, YEAR, TEXT) %>% 
+  
+  mutate(ccode = countrycode((COUNTRY_FINAL),  "country.name",  "cown")) %>% 
+  
+  # Filter out articles based on subject line
+  
+  mutate(subject = as.character(SUBJECT)) %>% 
+  
+  mutate(text = as.character(TEXT)) %>% 
+  
+  filter(!(grepl(paste(wordlist,collapse="|"), tolower(subject)))) %>% 
+  
+ dplyr::select()
+
+```

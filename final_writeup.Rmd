@@ -103,17 +103,17 @@ Political Rights, and Women’s Social Rights, of which the mean is taken to cre
 
 #### Extension Data 
 
-- **NAW Countries**: I create a new dataset which discards articles regarding countries that the US is currently in active military conflict with. I label these countries NAW (Not At War) countries. The countries that are excluded are Afghanistan, Iraq, Syria, Yemen, Somalia, Libya, and Niger (CITATION). 
+- **NAW Countries**: I create a new dataset which discards articles regarding countries that the US is currently in active military conflict with. I label these countries NAW (Not At War) countries. The countries that are excluded are Afghanistan, Iraq, Syria, Yemen, Somalia, Libya, and Niger (@vice). In the initial data set, there are 6448 country-year datapoints (where each datapoint represents a given country in a given year). In the new dataset there are 6209.
 
-- **Terrorism Related Terms**: I remove articles whos subject contain any of the following terms related to terrorism: terroris", "bomb", "attack". This list was created by reading through articles, selecting ones which covered terrorist content, and examining their shared subject tags. (GIVE TOTAL DATA POINTS AFTER)
+- **Terrorism Related Terms**: I remove articles whos subject contain any of the following terms related to terrorism: terroris", "bomb", "attack". This list was created by reading through articles, selecting ones which covered terrorist content, and examining their shared subject tags. In the initial dataset there are 4531 articles. After removing articles related to terrorism there are 4253 articles.
 
 #### Modeling Methods
 
 Terman uses 2 primary methods of modeling the data: probit model and negative binomial model:\newline
 
-- **Probit Model**: 
+- **Probit Model**: A probit regression is used because we are dealing with a binary variable (has an article written or does not have an article written).
 
-- **Negative Binomial Model**:
+- **Negative Binomial Model**: A Negative binomial model is used to model the data with the total count of articles used as the left hand side variable. A negative binomial model is a standard model for use with count data. The total count of articles is right skewed, making negative binomial model an effective choice in this scenario.
 
 # Results
 
@@ -201,11 +201,13 @@ From the marginal effects plot (figure 4) we can see how by limiting the data to
 
 In the set of articles there are multiple articles containing content related to specific acts of terrorism or violence. See figure 5 for an example of an article regarding women that relate to terrorist content. 
 
-## Figure 5: Article from New York Times related to women and terrorism
+## Figure 5: Excerpt of New York Times Article
 
 ![](./writeup_files/news_article.png)
 
-## Figure 5: Marginal Effects of Women's Rights Index on Reported (Count). All Countries vs. NAW Countries
+Articles like the one in figure 5 match Terman's criteria of being articles that fall under the category of women. However, it can be assumed that terrorist acts would generally be reported on regardless of location. Given that all of the top 6 countries most affected by terrorism are Muslim majority countries [@forbes], and that terrorism can be seen to impat womens' rights, it is reasonable to assume that terrorism could impact Terman's results. I remove articles related to terrorism from the dataset and analyze the data using Terman's methods of analysis. We can see the results in figure 5.
+
+## Figure 5: Marginal Effects of Women's Rights Index on Reported (Count). All Articles vs. Excluding Terrorism
 
 ```{r fig5, echo=FALSE}
 
@@ -213,7 +215,9 @@ readRDS('./writeup_files/fig4m.RDS')
 
 ```
 
-## Figure 6: Marginal Effects of Women's Rights Index on Reported (Count). All Countries vs. NAW Countries
+While there were some minor reductions in the magnitude of the impact of womens' rights on article countr in muslim countries, they were negligible compared to the results of removing AW countries. We can further analyze this data by creating a new dataset of NAW countries with terrorism removed (essentially combining hypothesis 1 and 2). We will call this new dataset "NAW Terrorism Removed". The results when modeling this dataset are below in figure 6.
+
+## Figure 6: Marginal Effects of Women's Rights Index on Reported (Count). All Data vs. NAW / Terrorism Removed Data
 
 ```{r fig6, echo=FALSE}
 
@@ -221,7 +225,15 @@ readRDS('./writeup_files/fig5m.RDS')
 
 ```
 
+When including both hypothesis (NAW and no terror), we see a reduction in the magnitude of both of Terman's claims, similiar to that of the NAW data.
+
 # Discussion
+
+My findings suggest that active wars could have an effect on Terman's results, demonstrated by the approximately 33% decrease in both of the effect of Womens' rights on coverage probability in muslim and non-muslim countries when removing AW countries from the dataset. While terrorism related content did not have as large of an effect, it is possible that my techiques for finding and removing content via subject tags were not robust, and that a more extensive process could have yielded better results. 
+
+Were I further investigate Terman's work I would be interested in finding indicators of war (in regard to the US) and terrorism that could be properly used to act as indicator variables in the models. For war, one possibility could be "# of deployed US soldiers in that specific country" (Assuming that it is a country with active military engagement not a base in a foreign ally's country).
+
+Another interesting trend I found was the increase in articles written about women in countries at war with the US after those wars began. It would be interesting to further examine the data above on a before and after timeline to see how the results change when examining the data before and after the conflict initiated.
 
 # Acknowledgments
 
