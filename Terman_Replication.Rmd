@@ -979,7 +979,7 @@ saveRDS(fig2m, './writeup_files/fig2m.RDS')
 
 # Figure 3: No War Marginal Effects Plot
 
-saveRDS(fig2m, './writeup_files/fig3m.RDS')
+saveRDS(fig3m, './writeup_files/fig3m.RDS')
 
 # Figure 4: No Terms Marginal Effects Plot
 

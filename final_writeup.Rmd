@@ -9,6 +9,7 @@ header-includes:
     - \usepackage{caption}
     - \usepackage{float}
     - \usepackage{lipsum}
+bibliography: citations.bib
 ---
 
 \captionsetup[table]{labelformat=empty}
@@ -57,6 +58,8 @@ Using 35 years of New York Times and Washington Post data, Terman analyzes the o
 
 * Quantity Hypothesis: The binary sepertion of Muslim Women from "freer" western women (i.e. pushing this narritive). So Muslim women from countries with poor rights records make news, while opposite for non-muslim.
 
+## Figure 1: Quantity Hypothesis (Figure drawn directly from Terman's paper)
+
 ![](./writeup_files/quantity1.png)
 
 * Quality Hypothesis: Quality / Framing Hypothesis: U.S. media coverage of women in Muslim and Middle Eastern countries is obsessed about one issue in particular: women’s rights and gender (in)equality.
@@ -75,42 +78,50 @@ Generally speaking, Americans view Muslims much less favorably than other religi
 
 #### Terman Study Data
 
-- News data is drawn from the LexisNexis databse. All articles containing the subject term “women” in non U.S. countries, published in the New York Times and Washington Post, 1980–2014 were downloaded. Each article is assigned to a single country with its most salient country term, if the term has a relevance score greater than or equal to 85% - articles with a lower relavence score, or with a country focused on the United States are discarded. A total of 4531 documents were included: 3726 from the New York Times and 805 from the Washington Post. \newline 
+- **News Data**: News data is drawn from the LexisNexis databse. All articles containing the subject term “women” in non U.S. countries, published in the New York Times and Washington Post, 1980–2014 were downloaded. Each article is assigned to a single country with its most salient country term, if the term has a relevance score greater than or equal to 85% - articles with a lower relavence score, or with a country focused on the United States are discarded. A total of 4531 documents were included: 3726 from the New York Times and 805 from the Washington Post. \newline 
 
-- All current and historic UN states were included with the addition of Palestine and exclusion of the United States. The United States were excluded as they are outside of the focus of the study (focusing on US news coverage of foreign countries).
+- **Country data**: All current and historic UN states were included with the addition of Palestine and exclusion of the United States. The United States were excluded as they are outside of the focus of the study (focusing on US news coverage of foreign countries).
 
-- Data is aggregated into country-year datasets, in which there is a row for each year and country (total number of countries * total number of years = total number of rows). Each country-year data includes a count n.count and n.binary. n.count indicates the number of articles matching the criteria written about that country in that given year, and n.binary is a binary indicator variable which equals 0 if no articles were written in that given year and 1 if at least 1 article was written in that given year.
+- **Country-Year data organization**: Data is aggregated into country-year datasets, in which there is a row for each year and country (total number of countries * total number of years = total number of rows). Each country-year data includes a count n.count and n.binary. n.count indicates the number of articles matching the criteria written about that country in that given year, and n.binary is a binary indicator variable which equals 0 if no articles were written in that given year and 1 if at least 1 article was written in that given year.
 
-- MUSLIM country stuff \newline
+- **Muslim Indicators**: Three seperate markers were used for indicating whether a country is or is not a muslim country. The first is the *Percentage Muslim* variable, indicating the percentage of muslims in a country (Drawn from Pew Research Center Data 2011). The second, *Muslim Majority*, is a binary indicator of 1 or 0, with value 1 when *Percentage Muslim* is greater than or equlal to 50%, and value 0 otherwise. The third is a set of regional groupings loosely based on Hafner-Burton and Ron’s (2013) six regional groupings (In which *MENA* indicates the Middle East and North Africa).\newline
 
-- OTHER VARIABLES \newline
+- **Women's Rights**: Women's Rights score is given on a scale of 0 to 3, where 3 indicates the women's rights were best guaranteed by law and practice and 0 indicates that womens rights were not guaranteed in law nor practice. This score is drawn from the Cingranelli-Richards Rights Index (CIRI), which culls data from the U.S. State Department’s annual human rights country reports. The CIRI score gives three variables, Women’s Economic Rights, Women’s
+Political Rights, and Women’s Social Rights, of which the mean is taken to create the variable *Composite Women's Rights*.\newline
+
+- **Country Reports**: Country Reports data relates to the overall quantity of articles related to a country reported by the NYT in a given year.
+
+- **Democracy**: Democracy variable from the Polity IV dataset’s Polity2 index is used to control for the level of autocrocy in a country (i.e. it could be difficult to report on women in highly autocratic or restrictive regimes). This varaible ranges from –10 (most autocratic) to +10 (most democratic).
+
+- **Instability**:  Instability data is taken from the Banks CrossNational Time Series Data Archive composite index of political instability. It include indicators regarding riots, antigovernment protests, guerrilla attacks, general strikes, purges, government crises, and assassinations.
+
+- **GDP per Capita**: GDP per capita data drawn from World Bank Development Indicators.
+
+- **log(Population)**: Population data drawn from the United Nations and logged.
 
 #### Extension Data 
 
-I create a new dataset which discards articles regarding countries that the US is currently in active military conflict with: Afghanistan, Iraq, Syria, Yemen, Somalia, Libya, and Niger (CITATION). We will refer to the set of all countries not including these countries as the NAW countries.
+- **NAW Countries**: I create a new dataset which discards articles regarding countries that the US is currently in active military conflict with. I label these countries NAW (Not At War) countries. The countries that are excluded are Afghanistan, Iraq, Syria, Yemen, Somalia, Libya, and Niger (CITATION). 
 
-ELABORATE ON WHY WE CHOSE THESE
-GIVE DETAILS ON HOW MANY DATA POINTS REMAIN AFTER DOING THIS
+- **Terrorism Related Terms**: I remove articles whos subject contain any of the following terms related to terrorism: terroris", "bomb", "attack". This list was created by reading through articles, selecting ones which covered terrorist content, and examining their shared subject tags. (GIVE TOTAL DATA POINTS AFTER)
+
+#### Modeling Methods
+
+Terman uses 2 primary methods of modeling the data: probit model and negative binomial model:\newline
+
+- **Probit Model**: 
+
+- **Negative Binomial Model**:
 
 # Results
 
 #### Summary of Terman Results
 
-  We can see Terman's results regarding the quantity hypothesis in Appendix Table 1, Appendix Table 2, and Appendix Figure 2. She shows that a lower women's rights index correlates with a higher probability of having an article written in a muslim country, while a higher women's rights index is correlated with a higher probability of having an article written in a non-muslim country (Appendix Figure 2). We can visualize this conclusion in figure 2.
+  We can see Terman's results regarding the quantity hypothesis in Appendix Table 1, Appendix Table 2, and Appendix Figure 2. She shows that a lower women's rights index correlates with a higher probability of having an article written in a muslim country, while a higher women's rights index is correlated with a higher probability of having an article written in a non-muslim country (Appendix Figure 2).
   
-## Figure 2: INSERT TITLE
-  
-```{r figure1, include=FALSE}
-library(gridExtra)
-trend_plot <- readRDS('./writeup_files/trend_plot.RDS')
-trend_plot2 <- readRDS('./writeup_files/trend_plot2.RDS')
-```
-```{r figure1out, echo=FALSE, warning=FALSE}
-grid.arrange(trend_plot, trend_plot2, ncol=2)
+## Figure 2: Marginal Effects Plot
 
-```
-
-She also runs two models on the data to analyze the significance of several variables on the article count. She first uses a binary article count to account for the right skewing of data and uses a probit analysis of the data (Appendix Table 1). She then uses a full article count and uses a negative binomial analysis of the data (Appendix Table 2). In both cases, we see that all three measures of a country being a "Muslim Country" are significant, and also that a lowered Women's Rights Index results in a higher probabibilt of an article being written in all three cases.
+Terman also runs two models on the data to analyze the significance of several variables on the article count. Terman first uses a binary article count to account for the right skewing of data and uses a probit analysis of the data (Appendix Table 1). She then uses a full article count and uses a negative binomial analysis of the data (Appendix Table 2). In both cases, we see that all three measures of a country being a "Muslim Country" are significant, and also that a lowered Women's Rights Index results in a higher probabibilt of an article being written in all three cases.
 
 #### Method 1: War Hypothesis
 
@@ -160,17 +171,17 @@ stargazer(wnb1, wnb2, wnb3, label = "table:negbin", header=FALSE, title = "Negat
 
 We can see that in both of these models, the expected positive correlation between Muslim Country and article count, and the expected negative correlation between Muslim Country x Women's Rights exist and are statistically significant. We can judge the significance of any changes in magnitude by looking at the marginal effects of women's rights coverage using a binary interaction plot (Figure 2).
 
-## Figure 3: Marginal Effects of Women's Rights Index on Reported (Count). All Countries vs. NAW Countries
+## Figure 2: Marginal Effects of Women's Rights Index on Reported (Count). All Countries vs. NAW Countries
 
 ```{r fig3, echo=FALSE}
 
-readRDS('./writeup_files/fig2m.RDS')
+readRDS('./writeup_files/fig3m.RDS')
 
 ```
 
 From the marginal effects plot we can see how by removing NAW countries, the magnitude of the effects described by Terman was reduced. More importantly, the confidence intervals of the Non-Muslim Countries now passes below 0, making the conclusion that Women's Rights increase the probability of receiving an article less significant.
 
-## Figure 4: Marginal Effects of Women's Rights Index on Reported (Count). All Countries vs. NAW Countries
+## Figure 3: Marginal Effects of Women's Rights Index on Reported (Count). All Countries vs. NAW Countries
 
 ```{r fig4, echo=FALSE}
 
@@ -182,7 +193,7 @@ readRDS('./writeup_files/fig3m.RDS')
 
 TBD whether this is possible or not: might require some heavy lifting
 
-## Figure 5: Marginal Effects of Women's Rights Index on Reported (Count). All Countries vs. NAW Countries
+## Figure 4: Marginal Effects of Women's Rights Index on Reported (Count). All Countries vs. NAW Countries
 
 ```{r fig5, echo=FALSE}
 
