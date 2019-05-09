@@ -170,7 +170,17 @@ rt_altered <- rt %>%
   
   # Create a unique key for each row
   
-  mutate(ccodeyear = paste0(ccode, year))
+  mutate(ccodeyear = paste0(ccode, year)) %>% 
+  
+  mutate(count=case_when(
+    is.na(count) ~ as.integer(0),
+    TRUE ~ as.integer(count)
+  )) %>% 
+  
+  mutate(n.docs=case_when(
+    is.na(n.docs) ~ as.integer(0),
+    TRUE ~ as.integer(n.docs)
+  ))
               
 ```
 
@@ -816,7 +826,7 @@ plot1 <- ggplot(myData) +
   
   geom_segment(aes(x = x_2 - bar_size + offset, y = upper_bound, xend = x_2 + bar_size + offset, yend = upper_bound, color = model)) +
   
-  labs(title = title, y = ylabel) + 
+  labs(y = ylabel, color="Data") + 
   
   scale_x_continuous(labels = c("Non-Muslim Country", "Muslim Country"), breaks=c(spot1, spot1 + 1)) +
   
@@ -916,17 +926,72 @@ fig5m <- sean_graph(list(nb1, wnb1, text_nb1, bothModels_nb1), labels = c("All D
 ```{r whyTerrorism, echo=FASLE}
 
 whyTerrorism <- rt_altered %>% 
-  mutate(countryType = (ccode %in% country_codes)) %>% 
+  mutate(countryType = case_when(
+    (ccode %in% country_codes) ~ "At War",
+    TRUE ~ "Not at War"
+         )) %>% 
   filter(!is.na(women_composite)) %>% 
   filter(muslim > .5) %>% 
   group_by(year, countryType) %>% 
   dplyr::summarize(meanWomen = mean(women_composite)) %>% 
   ggplot(aes(x = year, y = meanWomen)) +
-  geom_point(aes(color = countryType)) + 
-  geom_line(aes(color = countryType))
+  geom_point(aes(color = countryType), size = 3, alpha = .3) + 
+  geom_point(aes(color = countryType), size = 1, alpha = 1) + 
+  geom_line(aes(color = countryType), alpha=.3) +
+  geom_smooth(aes(color = countryType), alpha = .15, method ='loess', formula="y ~ x") +
+  labs(title = "Mean Womens' Rights Composite Score in Muslim Countries (NAW vs AW)",
+       x = "Year", color = "Country Status",
+       y = "Mean Womens' Rights Composite Score") +
+  theme_bw()
 
 ```
 
+```{r whyTerrorism2, echo=FASLE}
+
+whyTerrorism2 <- rt_altered %>% 
+  mutate(countryType = case_when(
+    (ccode %in% country_codes) ~ "At War",
+    TRUE ~ "Not at War"
+         )) %>% 
+  filter(!is.na(women_composite)) %>% 
+  filter(muslim > .5) %>% 
+  group_by(year, countryType) %>% 
+  dplyr::summarize(ncountmean = mean(n.docs)) %>% 
+  ggplot(aes(x = year, y = ncountmean)) +
+  geom_point(aes(color = countryType), size = 3, alpha = .3) + 
+  geom_point(aes(color = countryType), size = 1, alpha = 1) + 
+  geom_line(aes(color = countryType), alpha=.3) +
+  geom_smooth(aes(color = countryType), alpha = .15, method ='loess', formula="y ~ x") +
+  labs(title = "Mean Coverage in Muslim Countries (NAW vs AW)",
+       x = "Year", color = "Country Status",
+       y = "Mean number of articles") +
+  theme_bw()
+
+```
+
+```{r whyTerrorism3, echo=FASLE}
+
+rt_altered %>% 
+  mutate(countryType = case_when(
+    (ccode %in% country_codes) ~ "At War",
+    TRUE ~ "Not at War"
+         )) %>% 
+  filter(muslim > .5) %>% 
+  group_by(year, countryType) %>% 
+  dplyr::summarize(ncountmean = sum(n.docs)/sum(count)) %>% 
+  ggplot(aes(x = year, y = ncountmean)) +
+  geom_point(aes(color = countryType), size = 3, alpha = .3) + 
+  geom_point(aes(color = countryType), size = 1, alpha = 1) + 
+  geom_line(aes(color = countryType), alpha=.3) +
+  geom_smooth(aes(color = countryType), alpha = .15, method ='loess', formula="y ~ x") +
+  labs(title = "Mean Coverage in Muslim Countries (NAW vs AW)",
+       x = "Year", color = "Country Status",
+       y = "Mean number of articles") +
+  theme_bw()
+
+
+
+```
 
 ```{r saveApen, include=FALSE}
 
@@ -992,6 +1057,6 @@ saveRDS(fig5m, './writeup_files/fig5m.RDS')
 # Why Removing Terrorism Plot
 
 saveRDS(whyTerrorism, './writeup_files/whyTerrorism.RDS')
-
+saveRDS(whyTerrorism2, './writeup_files/whyTerrorism2.RDS')
 
 ```
