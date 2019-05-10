@@ -17,9 +17,10 @@ bibliography: citations.bib
 ```{r libraries, include=FALSE}
 rm(list=ls())
 
+# Load required Libraries
+
 library(tidyverse)
 library(dplyr)
-
 require(plyr)
 require("MASS")
 require("xtable")
@@ -38,7 +39,8 @@ library(gt)
 library(xaringan)
 source("dataverse_files/interaction_plots.R") # for interaction plots; see paper for attribution
 
-# Load Data
+# Load country-year data and meta data
+
 load("dataverse_files/stm.RData")
 
 ```
@@ -131,7 +133,13 @@ Western media is more likely to report on countries that the U.S. is engaged wit
 
 ```{r figwhyT2, echo=FALSE}
 
+# Load Data for Figure 2 from saved files
+# Figure 2 is saved as a ggplot
+
 readRDS('./writeup_files/whyTerrorism2.RDS') +
+  
+  # Add a footnote to the figure
+  
   labs(caption="The mean number of articles on at war countries increases relative to not at war countries around 1990, \n the year of the Gulf War.")
 
 ```
@@ -140,7 +148,13 @@ readRDS('./writeup_files/whyTerrorism2.RDS') +
 
 ```{r figwhyT1, echo=FALSE}
 
+# Load Data for Figure 2 from saved files
+# Figure 2 is saved as a ggplot
+
 readRDS('./writeup_files/whyTerrorism.RDS') +
+  
+  # Add a footnote to the figure 
+  
   labs(caption="Women's rights composite score in at war countries decreases around 1990, the year of the Gulf War.")
 
 ```
@@ -153,7 +167,8 @@ Given the negative correlation between war and womens' rights, and the positive 
 
 ```{r tb1, echo=FALSE, results='asis'}
 
-# Table 1: Probit Analysis
+# Load data for table 1 from saved files
+
 wlogit1 <- readRDS('./writeup_files/wlogit11.RDS')
 wlogit2 <- readRDS('./writeup_files/wlogit12.RDS')
 wlogit3 <- readRDS('./writeup_files/wlogit13.RDS')
@@ -161,7 +176,8 @@ wlogit1.se <- readRDS('./writeup_files/wlogit14.RDS')
 wlogit2.se <- readRDS('./writeup_files/wlogit15.RDS')
 wlogit3.se <- readRDS('./writeup_files/wlogit16.RDS')
 
-# Print Table 1
+# Use stargazer to output table 1
+
 stargazer(wlogit1, wlogit2, wlogit3, header=FALSE, label = "table:probit", style = "ajps",  se = list(wlogit1.se, wlogit2.se, wlogit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Repocountry.yeared (Binary)", covariate.labels=c("Country Repocountry.years", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, .001))
 
 ```
@@ -172,7 +188,8 @@ stargazer(wlogit1, wlogit2, wlogit3, header=FALSE, label = "table:probit", style
 
 ```{r tb2, echo=FALSE, results='asis'}
 
-# Table 2: Negative Binomial Analysis
+# Load table 2 data from saved files
+
 wnb1 <- readRDS('./writeup_files/wnb11.RDS')
 wnb2 <- readRDS('./writeup_files/wnb12.RDS')
 wnb3 <- readRDS('./writeup_files/wnb13.RDS')
@@ -180,7 +197,8 @@ wnb1.se <- readRDS('./writeup_files/wnb14.RDS')
 wnb2.se <- readRDS('./writeup_files/wnb15.RDS')
 wnb3.se <- readRDS('./writeup_files/wnb16.RDS')
 
-# Print Table 2
+# Use stargazer to output table 2
+
 stargazer(wnb1, wnb2, wnb3, label = "table:negbin", header=FALSE, style = "ajps", se = list(wnb1.se, wnb2.se, wnb3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Reported (Count)", covariate.labels=c("Country Reports", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, 0.001))
 
 ```
@@ -193,7 +211,12 @@ We can see that in both of these models, the expected positive correlation betwe
 
 ```{r fig3, echo=FALSE}
 
+# Load data for figure 4 from saved file
+
 readRDS('./writeup_files/fig3m.RDS') +
+  
+  # Use labs to add a footnote to figure 4
+  
   labs(caption = "While confidence intervals still overlap, magnitude of the effect has decreased by 33% using NAW data.")
 
 ```
@@ -214,7 +237,12 @@ Articles like the one in figure 5 match Terman's criteria of being articles that
 
 ```{r fig5, echo=FALSE}
 
+# Load data from saved files
+
 readRDS('./writeup_files/fig4m.RDS') + 
+  
+  # Use labs to add a footnote to the graph
+  
   labs(caption= "Removing terrorism related content shows a negligible effect compared to results using all data.")
 
 ```
@@ -225,7 +253,12 @@ While there were some minor reductions in the magnitude of the impact of womens'
 
 ```{r fig6, echo=FALSE}
 
+# Load data from saved files
+
 readRDS('./writeup_files/fig5m.RDS') +
+  
+  # Use labs to add a footnote to the graph
+  
   labs(caption="'NAW terrorism removed' demonstrates a 33% decrease in magnitude of effect compared to all data")
 
 ```
@@ -244,14 +277,6 @@ Another interesting trend I found was the increase in articles written about wom
 
 I would like to thank David Kane, Mark Hill, and my Gov 1006 class for providing feedback and assistance on the paper. I would also like to thank Rochelle Terman for providing me with extra information that helped me process and work with the data.
 
-
-
-
-
-
-
-
-
 \pagebreak
 
 # Appendix
@@ -260,12 +285,16 @@ I would like to thank David Kane, Mark Hill, and my Gov 1006 class for providing
 
 ```{r t1, echo=FALSE, results='asis'}
 
+# Load Data for Table 1 from saved files
+
 l1 <- readRDS('./writeup_files/apent11.RDS')
 l2 <- readRDS('./writeup_files/apent12.RDS')
 l3 <- readRDS('./writeup_files/apent13.RDS')
 logit1.se <- readRDS('./writeup_files/apent14.RDS')
 logit2.se <- readRDS('./writeup_files/apent15.RDS')
 logit3.se <- readRDS('./writeup_files/apent16.RDS')
+
+# Use stargazer to print out table 1
 
 stargazer(l1, l2, l3, header=FALSE, label = "table:probit", style = "ajps", title = "Probit Analysis of U.S. News Coverage about Women Abroad", se = list(logit1.se, logit2.se, logit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Repocountry.yeared (Binary)", covariate.labels=c("Country Repocountry.years", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, .001))
 
@@ -276,12 +305,16 @@ stargazer(l1, l2, l3, header=FALSE, label = "table:probit", style = "ajps", titl
 
 ```{r t2, echo=FALSE, results='asis'}
 
+# Load Data for Table 2 from saved files
+
 nb1 <- readRDS('./writeup_files/apent21.RDS')
 nb2 <- readRDS('./writeup_files/apent22.RDS')
 nb3 <- readRDS('./writeup_files/apent23.RDS')
 nb1.se <- readRDS('./writeup_files/apent24.RDS')
 nb2.se <- readRDS('./writeup_files/apent25.RDS')
 nb3.se <- readRDS('./writeup_files/apent26.RDS')
+
+# Use stargazer to print out table 2
 
 apent2 <- stargazer(nb1, nb2, nb3, label = "table:negbin", header=FALSE, title = "Negative Binomial Analysis of U.S. News Coverage about Women Abroad", style = "ajps", se = list(nb1.se, nb2.se, nb3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Reported (Count)", covariate.labels=c("Country Reports", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Instability", "Population", "GDP per capita", "Women's Rights x Muslim Majority", "Women's Rights x MENA","Women's Rights x Muslim Percentage"), star.cutoffs = c(0.05, 0.01, 0.001))
 
@@ -292,7 +325,11 @@ apent2 <- stargazer(nb1, nb2, nb3, label = "table:negbin", header=FALSE, title =
 
 ```{r t3, echo=FALSE, results='asis'}
 
+# Load Data for Table 3 from saved files
+
 dat <- readRDS('./writeup_files/apent3.RDS')
+
+# use xtable to print out table 3
 
 print(xtable(dat))
 
@@ -302,12 +339,16 @@ print(xtable(dat))
 
 ```{r t4, echo=FALSE, results='asis'}
 
+# Load Data for Table 4 from saved files
+
 heckit1 <- readRDS('./writeup_files/apent41.RDS')
 heckit2 <- readRDS('./writeup_files/apent42.RDS')
 heckit3 <- readRDS('./writeup_files/apent43.RDS')
 heckit1.se <- readRDS('./writeup_files/apent44.RDS')
 heckit2.se <- readRDS('./writeup_files/apent45.RDS')
 heckit3.se <- readRDS('./writeup_files/apent46.RDS')
+
+# Use stargazer to print out table 4
 
 stargazer(heckit1, heckit2, heckit3, header=FALSE,label = "table:heckit", style = "ajps", title = "Two-Step Analysis of Rights Focus in U.S. News Coverage about Women Abroad", se = list(heckit1.se, heckit2.se, heckit3.se), notes="Robust standard errors clustered on country appear in parentheses.",  dep.var.labels = "Rights Focus", covariate.labels=c("Intercept", "Women's Rights Index","Muslim Majority","MENA", "Muslim Percentage", "Democracy", "Physical Integrity Rights"), star.cutoffs = c(0.05, 0.01, 0.001))
 
@@ -317,7 +358,11 @@ stargazer(heckit1, heckit2, heckit3, header=FALSE,label = "table:heckit", style 
 
 ```{r f2, echo=FALSE}
 
+# Load Data for Figure 2 from saved files
+
 nb1 <- readRDS('./writeup_files/apen2.RDS')
+
+# Use the interaction_plot_binary function to print out an interaction plot of the terms
 
 interaction_plot_binary(nb1, effect="women_composite", moderator="muslim.maj", interaction="women_composite:muslim.maj", factor_labels=c("Not Muslim Majority","Muslim Majority"), xlabel="", ylabel="Marginal Effect of Women's Rights on Coverage", title="")
 
@@ -328,7 +373,11 @@ interaction_plot_binary(nb1, effect="women_composite", moderator="muslim.maj", i
 
 ```{r f3, echo=FALSE}
 
+# Load Data for Figure 3 from saved files
+
 model <- readRDS('./writeup_files/apen3.RDS')
+
+# Use plot.STM to print out the graph
 
 plot.STM(model,type="summary",custom.labels=labels,main="")
 
@@ -338,6 +387,8 @@ plot.STM(model,type="summary",custom.labels=labels,main="")
 ## Figure 4: Expected Document Proportions for Four Topics
 
 ```{r f4, echo=FALSE}
+
+# Load Data for Figure 4 from saved files
 
 prep <- readRDS('./writeup_files/apen41.RDS')
 regions <- readRDS('./writeup_files/apen42.RDS')
