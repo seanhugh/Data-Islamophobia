@@ -14,4 +14,6 @@ File Organization
 
 **Terman_Replication.Rmd** - Rmd code used to create all figures, tables
 
-**writeup_files** - folder where all figure and table data for final presentation is stored
+**writeup_files** - folder where all figure and table data for final writeup are stored
+
+**pres_resources** - folder where all figures for presentation are stored
