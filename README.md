@@ -4,7 +4,9 @@ I analyze the findings in the paper [Islamophobia and Media Portrayals of Muslim
 
 Terman's paper finds that western media (specifically the New York Times and Washington Post) depicts Muslim countries as a *cultural* threat through an analysis of their coverage of Muslim women. By controlling for war and terrorism, I reduce the magnitude of these results by 33%.
 
-#### File Organization
+-----
+
+File Organization
 
 **final_writeup.pdf** - PDF copy of the final report
 
