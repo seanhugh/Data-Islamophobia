@@ -12,7 +12,7 @@ File Organization
 
 **final_writeup.Rmd** - Rmd code used to generate final report
 
-**Terman_Replication.Rmd** - Rmd code used to create all figures, tables
+**data_manipulation.Rmd** - Rmd code used to create all figures, tables
 
 **writeup_files** - folder where all figure and table data for final writeup are stored
 
