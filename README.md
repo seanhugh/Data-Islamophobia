@@ -21,3 +21,6 @@ File Organization
 ----
 
 Select Results
+![Key Result](https://raw.githubusercontent.com/seanhugh/Data-Islamaphobia/master/writeup_files/keyexerpt.png)
+
+NAW ("Not at war") countries refers to a subset of countries that are not currently involved in active war with the United States. By removing countries at war with the United States from the experimental data set, I found the magnitude of the effects of Terman's results decreased by around 33%.
