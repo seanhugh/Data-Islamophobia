@@ -17,3 +17,7 @@ File Organization
 **writeup_files** - folder where all figure and table data for final writeup are stored
 
 **dataverse_files** - folder where all Terman replication data is stored
+
+----
+
+Select Results
